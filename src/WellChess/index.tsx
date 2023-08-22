@@ -16,7 +16,7 @@ const WellChess = () => {
     // 要渲染当前落子的方块，你需要从 history 中读取最后一个 squares 数组。
     const currentSquares = history[currentMove];
 
-    function handlePlay(nextSquares: Array<null | String>) {
+    function handlePlay(nextSquares: Array<null | string>) {
         const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
         setHistory(nextHistory);
         setCurrentMove(nextHistory.length - 1);

@@ -1,8 +1,9 @@
 
 import "./App.css";
+import './App.d.ts'
 import WellChess from "./WellChess";
 
-function App() {
+const App = () => {
   return (
     <>
       <WellChess />

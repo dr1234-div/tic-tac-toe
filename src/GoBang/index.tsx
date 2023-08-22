@@ -2,9 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import './index.css'
 import useHook from "./useHook";
 const GobangHook = () => {
+  let { play, setpalyArr, chessman, palyArr } = useHook()
   const navigate = useNavigate();
   const border = Array(20).fill(null)
-  let { play, chessman, palyArr } = useHook()
+
   // 渲染黑白棋子
   const Teml = (rowIndex: number, colIndex: number) => {
     if (palyArr.find((item: { row: number, col: number, chess: number }) => item.row === rowIndex && item.col === colIndex)) {
@@ -32,10 +33,16 @@ const GobangHook = () => {
     index > 0 ? (description = '跳转到步骤：' + index) : (description = '开始游戏')
     return (
       <li key={index}>
-        <button>{description}</button>
+        <button onClick={() => jumpTo(index)}>{description}</button>
       </li>
     );
   })
+
+  // 点击跳转到指定步骤的回调函数
+  function jumpTo(nextMove: number) {
+    const nextHistory = palyArr.splice(0, nextMove)
+    setpalyArr(nextHistory)
+  }
   return (
     <div className="chessboard-wrapper">
       <div>

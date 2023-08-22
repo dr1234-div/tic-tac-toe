@@ -1,7 +1,7 @@
 import Square from "./Squre";
 
 type BoardType = {
-    xIsNext: boolean, squares: any[], onPlay: (nextSquares: (String | null)[]) => void
+    xIsNext: boolean, squares: Array<null | string>, onPlay: (nextSquares: (string | null)[]) => void
 }
 
 // 井棋棋盘
@@ -9,7 +9,7 @@ const Board = (props: BoardType) => {
     const { xIsNext, squares, onPlay } = props
 
     // 判断是否获胜
-    function calculateWinner(squares: Array<[]>) {
+    function calculateWinner(squares: Array<null | string>) {
         const lines = [
             [0, 1, 2],
             [3, 4, 5],

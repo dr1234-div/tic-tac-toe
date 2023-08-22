@@ -1,4 +1,3 @@
-// import App from "../App";
 import App from "../App";
 import GoBang from "../GoBang";
 import WellChess from "../WellChess";
