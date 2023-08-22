@@ -21,6 +21,7 @@ const useHook = () => {
   const [chessman,setChessmMan] = useState<string>('首位：黑棋')
 
   const play =(row:number, col:number)=>{
+    if(chessman === '获胜者：黑棋' || chessman === '获胜者：白棋') return
     let newChess = chess === 1 ? 2 : 1;
     let newPalyArr = [...palyArr, { row, col, chess:newChess }]
     if(newChess === 2){
