@@ -110,8 +110,10 @@ const useHook = () => {
   return {
     palyArr,
     chessman,
+    setChessmMan,
     play,
-    setpalyArr
+    setpalyArr,
+    setChess
   }
 }
 export default useHook
