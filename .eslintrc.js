@@ -190,7 +190,7 @@ module.exports = {
         'no-debugger': [2],
         // 要求或禁止 Unicode BOM
         'unicode-bom': 1,
-        // 规定换行格式
+        // 规定换行格式,测试
         'linebreak-style': [2, 'unix'],
         // 要求使用3个等于号
         eqeqeq: 1,
