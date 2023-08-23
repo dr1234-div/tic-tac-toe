@@ -5,14 +5,10 @@ import reportWebVitals from './reportWebVitals';
 import { RouterProvider } from 'react-router-dom';
 import router from './router';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-root.render(
-  <React.StrictMode>
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+root.render(<React.StrictMode>
     <RouterProvider router={router}></RouterProvider>
-  </React.StrictMode>
-);
+</React.StrictMode>);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

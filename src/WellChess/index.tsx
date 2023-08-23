@@ -1,12 +1,9 @@
-import { useRef, useState } from "react";
-import Board from "./compents/Board";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import Board from './compents/Board';
+import { useNavigate } from 'react-router-dom';
 
 // 井棋子
 const WellChess = () => {
-    const childRef = useRef(null);
-
-    // [Array(9).fill(null)] 是一个包含单个元素的数组，它本身是一个包含 9 个 null 的数组。
     const [history, setHistory] = useState([Array(9).fill(null)]);
 
     // 当前步骤状态存储
@@ -18,17 +15,17 @@ const WellChess = () => {
     // 要渲染当前落子的方块，你需要从 history 中读取最后一个 squares 数组。
     const currentSquares = history[currentMove];
 
-    function handlePlay(nextSquares: Array<null | string>) {
+    function handlePlay (nextSquares: Array<null | string>) {
         const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
         setHistory(nextHistory);
         setCurrentMove(nextHistory.length - 1);
     }
 
     // 点击跳转到指定步骤的回调函数
-    function jumpTo(nextMove: number) {
-        if (sessionStorage.getItem('isWin') === "获胜者: O" || sessionStorage.getItem('isWin') === "获胜者: X") {
-            alert('注意：获胜后将无法进行悔棋！！！')
-            return
+    function jumpTo (nextMove: number) {
+        if (sessionStorage.getItem('isWin') === '获胜者: O' || sessionStorage.getItem('isWin') === '获胜者: X') {
+            alert('注意：获胜后将无法进行悔棋！！！');
+            return;
         }
         setCurrentMove(nextMove);
     }
@@ -37,7 +34,7 @@ const WellChess = () => {
     const moves = history.map((squares, move: number) => {
         let description;
         if (move > 0) {
-            description = '跳转到步骤：' + move;
+            description = `跳转到步骤：${move}`;
         } else {
             description = '开始游戏';
         }
@@ -62,6 +59,6 @@ const WellChess = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 export default WellChess;

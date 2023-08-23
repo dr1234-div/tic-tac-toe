@@ -1,15 +1,16 @@
-import Square from "./Squre";
+import React from 'react';
+import Square from './Squre';
 
 type BoardType = {
-    xIsNext: boolean, squares: Array<null | string>, onPlay: (nextSquares: (string | null)[]) => void
+    xIsNext: boolean; squares: Array<null | string>; onPlay: (nextSquares: (string | null)[]) => void;
 }
 
 // 井棋棋盘
 const Board = (props: BoardType) => {
-    const { xIsNext, squares, onPlay } = props
+    const { xIsNext, squares, onPlay } = props;
 
     // 判断是否获胜
-    function calculateWinner(squares: Array<null | string>) {
+    function calculateWinner (squares: Array<null | string>) {
         const lines = [
             [0, 1, 2],
             [3, 4, 5],
@@ -20,25 +21,25 @@ const Board = (props: BoardType) => {
             [0, 4, 8],
             [2, 4, 6],
         ];
-        for (let i = 0; i < lines.length; i++) {
-            const [a, b, c] = lines[i];
-            if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-                return squares[a];
+        for (let index = 0; index < lines.length; index++) {
+            const [one, two, three] = lines[index];
+            if (squares[one] && squares[one] === squares[two] && squares[one] === squares[three]) {
+                return squares[one];
             }
         }
         return null;
     }
 
     // 单元格单击事件
-    function handleClick(i: number) {
-        if (calculateWinner(squares) || squares[i]) {
+    function handleClick (index: number) {
+        if (calculateWinner(squares) || squares[index]) {
             return;
         }
         const nextSquares = squares.slice();
         if (xIsNext) {
-            nextSquares[i] = 'X';
+            nextSquares[index] = 'X';
         } else {
-            nextSquares[i] = 'O';
+            nextSquares[index] = 'O';
         }
         onPlay(nextSquares);
     }
@@ -47,14 +48,14 @@ const Board = (props: BoardType) => {
     const winner = calculateWinner(squares);
     let status;
     if (winner) {
-        status = '获胜者: ' + winner;
+        status = `获胜者: ${winner}`;
     } else {
-        status = '下一位玩家: ' + (xIsNext ? 'X' : 'O');
+        status = `下一位玩家: ${xIsNext ? 'X' : 'O'}`;
     }
-    sessionStorage.setItem('isWin', status)
+    sessionStorage.setItem('isWin', status);
     return (
         <>
-            <div className={"status"}><h1>{status}</h1></div>
+            <div className={'status'}><h1>{status}</h1></div>
             <div className="board-row">
                 <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
                 <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
@@ -71,6 +72,6 @@ const Board = (props: BoardType) => {
                 <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
             </div>
         </>
-    )
-}
-export default Board
+    );
+};
+export default Board;
