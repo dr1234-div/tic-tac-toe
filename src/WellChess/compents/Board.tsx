@@ -5,11 +5,19 @@ type BoardType = {
     xIsNext: boolean; squares: Array<null | string>; onPlay: (nextSquares: (string | null)[]) => void;
 }
 
-// 井棋棋盘
+/**
+ * @param {boolean} props.xIsNext 下一个是不是X
+ * @param {Array<null | string>} props.squares 保存着当前棋盘上的棋子状态的数组
+ * @param {void} props.onPlay 单元格的点击监听回调
+ * @return {*}
+ */
 const Board = (props: BoardType) => {
     const { xIsNext, squares, onPlay } = props;
 
-    // 判断是否获胜
+    /**
+     * @param {(Array<null | string>)} squares 保存着当前棋盘上的棋子状态的数组
+     * @description 声明变量保存所有获胜的坐标代码，通过循环遍历是否相同来判断是否获胜
+     */
     function calculateWinner (squares: Array<null | string>) {
         const lines = [
             [0, 1, 2],
@@ -30,7 +38,10 @@ const Board = (props: BoardType) => {
         return null;
     }
 
-    // 单元格单击事件
+    /**
+     * @param {number} index 棋子所在位置的数组索引
+     * @return {*} 单元格点击事件
+     */
     function handleClick (index: number) {
         if (calculateWinner(squares) || squares[index]) {
             return;

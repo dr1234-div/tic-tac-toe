@@ -1,10 +1,13 @@
 import { useState } from 'react';
 
+/**
+ *@description 自定义hook,抽离逻辑代码，防止组件臃肿，封装了下棋的动作监听回调以及游戏获胜的判断方法
+ */
 const useHook = () => {
   type palyArrType = {
-    row: number;
-    col: number;
-    chess: number;
+      row: number;
+      col: number;
+      chess: number;
   }[]
 
   // 记录已下的棋子数据，包含横纵坐标以及棋子的颜色
@@ -20,6 +23,12 @@ const useHook = () => {
   // 存储下一个棋子的颜色
   const [chessman, setChessmMan] = useState<string>('首位：黑棋');
 
+  /**
+   * @param {number} row 棋子横坐标
+   * @param {number} col 棋子纵坐标
+   * @description 用于判断下一步位黑棋/白棋，同步更新下一步棋子的颜色代码、
+   * 棋子活动的历史记录以及判断是否获胜
+   */
   const play = (row: number, col: number) => {
       if (chessman === '获胜者：黑棋' || chessman === '获胜者：白棋') return;
       const newChess = chess === 1 ? 2 : 1;
@@ -34,7 +43,14 @@ const useHook = () => {
       getWinner(newPalyArr, newChess, chessArr, row, col);
   };
 
-
+  /**
+   * @param {palyArrType} palyArr 当前棋盘上的棋子状态数组
+   * @param {number} chess 下一个棋子的颜色代码（1/2）
+   * @param {palyArrType[]} chessArr
+   * @param {number} row 当前棋子的横坐标
+   * @param {number} col 当前棋子的纵坐标
+   * @description 用户判断是否有一方获胜
+   */
   const getWinner = (palyArr: palyArrType, chess: number, chessArr: palyArrType[], row: number, col: number) => {
       palyArr.map((item) => {
           return chessArr[item.row][item.col] = { ...item };

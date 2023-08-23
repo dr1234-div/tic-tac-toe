@@ -2,11 +2,16 @@ import React, { useState }  from 'react';
 import { useNavigate } from 'react-router-dom';
 import './index.css';
 import useHook from './useHook';
+
+/**
+ *@description GobangHook 五子棋的自定义组件
+ *@return 渲染棋盘、游戏类型的切换按钮以及历史记录的跳转按钮
+ */
 const GobangHook = () => {
   type palyArrType = {
-    row: number;
-    col: number;
-    chess: number;
+      row: number;
+      col: number;
+      chess: number;
   }[]
   const { play, setpalyArr, chessman, palyArr, setChess, setChessmMan } = useHook();
   const navigate = useNavigate();
@@ -17,6 +22,11 @@ const GobangHook = () => {
   const [currentMove, setCurrentMove] = useState(0);
   const currentSquares = history[currentMove];
 
+  /**
+   * @param {number} rowIndex 棋子的水平坐标
+   * @param {number} colIndex 棋子的垂直坐标
+   * @description 该函数实现对下棋动作的回调监听，每次执行都会保存以往的历史记录和当前的索引和执行play函数
+   */
   function playChess (rowIndex: number, colIndex: number) {
       if (chessman === '获胜者：黑棋' || chessman === '获胜者：白棋') return;
 
@@ -32,7 +42,11 @@ const GobangHook = () => {
       play(rowIndex, colIndex);
   }
 
-  // 渲染黑白棋子
+  /**
+   * @param {number} rowIndex 棋子的横坐标
+   * @param {number} colIndex 棋子的纵坐标
+   * @return {node} 返回一个节点，用于渲染黑棋或白棋
+   */
   const teml = (rowIndex: number, colIndex: number) => {
       if (palyArr.find((item: { row: number, col: number, chess: number }) => item.row === rowIndex && item.col === colIndex)) {
           return palyArr.find((item: { row: number, col: number, chess: number }) => item.row === rowIndex && item.col === colIndex)?.chess === 1 ? (
@@ -43,8 +57,8 @@ const GobangHook = () => {
       }
       return (
           <div
-          className="chessboard-cell-click"
-          onClick={() => playChess(rowIndex, colIndex)}
+              className="chessboard-cell-click"
+              onClick={() => playChess(rowIndex, colIndex)}
           ></div>
       );
   };
@@ -58,7 +72,10 @@ const GobangHook = () => {
       );
   });
 
-  // 点击跳转到指定步骤的回调函数
+  /**
+   * @param {number} nextMove 传入指定的步骤数
+   * @return {node} 跳转到指定的棋盘状态
+   */
   function jumpTo (nextMove: number) {
       // 获胜后将不能进行悔棋
       if (chessman === '获胜者：黑棋' || chessman === '获胜者：白棋') {
@@ -69,7 +86,6 @@ const GobangHook = () => {
       const nextHistory = history.slice(0, nextMove + 1);
       const filterArr = nextHistory.filter(value => value !== undefined);
       const lastFilterArr = filterArr[filterArr.length - 1];
-      console.log(lastFilterArr);
       if (lastFilterArr.chess === 2) {
           setChessmMan('下一位：黑棋');
       } else {

@@ -1,5 +1,8 @@
 import { ReportHandler } from 'web-vitals';
 
+/**
+ * @param {ReportHandler} [onPerfEntry] 框架自带的内容
+ */
 const reportWebVitals = (onPerfEntry?: ReportHandler) => {
     if (onPerfEntry && onPerfEntry instanceof Function) {
         import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
