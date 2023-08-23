@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Board from "./compents/Board";
 import { useNavigate } from "react-router-dom";
 
 // 井棋子
 const WellChess = () => {
+    const childRef = useRef(null);
+
     // [Array(9).fill(null)] 是一个包含单个元素的数组，它本身是一个包含 9 个 null 的数组。
     const [history, setHistory] = useState([Array(9).fill(null)]);
 
@@ -24,6 +26,10 @@ const WellChess = () => {
 
     // 点击跳转到指定步骤的回调函数
     function jumpTo(nextMove: number) {
+        if (sessionStorage.getItem('isWin') === "获胜者: O" || sessionStorage.getItem('isWin') === "获胜者: X") {
+            alert('注意：获胜后将无法进行悔棋！！！')
+            return
+        }
         setCurrentMove(nextMove);
     }
 

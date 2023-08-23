@@ -66,6 +66,12 @@ const GobangHook = () => {
 
   // 点击跳转到指定步骤的回调函数
   function jumpTo(nextMove: number) {
+
+    // 获胜后将不能进行悔棋
+    if (chessman === '获胜者：黑棋' || chessman === '获胜者：白棋') {
+      alert('注意：获胜后将无法进行悔棋！！！')
+      return
+    }
     setCurrentMove(nextMove)
     const nextHistory = history.slice(0, nextMove + 1)
     const filterArr = nextHistory.filter(value => value != undefined)

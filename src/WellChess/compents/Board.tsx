@@ -51,6 +51,7 @@ const Board = (props: BoardType) => {
     } else {
         status = '下一位玩家: ' + (xIsNext ? 'X' : 'O');
     }
+    sessionStorage.setItem('isWin', status)
     return (
         <>
             <div className={"status"}><h1>{status}</h1></div>
