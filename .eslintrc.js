@@ -1,3 +1,4 @@
+"use strict";
 module.exports = {
     "env": {
         "browser": true,
@@ -5,17 +6,19 @@ module.exports = {
         "node": true
     },
     "extends": [
-        // "standard-with-typescript",
-        // "plugin:react/recommended"
+        "eslint:all"
+
+        /*
+         * "standard-with-typescript",
+         * "plugin:react/recommended"
+         */
     ],
     "overrides": [
         {
             "env": {
                 "node": true
             },
-            "files": [
-                ".eslintrc.{js,cjs}"
-            ],
+            "files": [".eslintrc.{js,cjs}"],
             "parserOptions": {
                 "sourceType": "script"
             }
@@ -25,9 +28,7 @@ module.exports = {
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
-    "plugins": [
-        "react"
-    ],
+    "plugins": ["react"],
     "rules": {
     }
-}
+};
