@@ -1,82 +1,82 @@
 
 .chessboard-wrapper{
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
-  padding: 0;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0;
 }
 
 .chessboard{
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .chessboard-right{
-  margin-left: 120px;
-  height: 50%;
-  display: flex;
-  flex-direction: column;
+    margin-left: 120px;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
 }
 
 .stateContent{
-  margin-top: 30px;
+    margin-top: 30px;
 }
 
 .gameChange{
-  font-size: 20px;
+    font-size: 20px;
 }
 .h1Style{
-  padding-left: 25px;
-  margin: 0;
+    padding-left: 25px;
+    margin: 0;
 }
 .chessboard-row:first-child .chessboard-cell{
-  border: none;
+    border: none;
 }
 .chessboard-col:first-child .chessboard-cell{
-  border: none;
+    border: none;
 }
 .chessboard-row{
-  position: relative;
+    position: relative;
 }
 .chessboard-cell{
-  border: 1px solid rgb(131, 130, 130);
-  width: 25px;
-  height: 25px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  box-sizing: border-box;
+    border: 1px solid rgb(131, 130, 130);
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    box-sizing: border-box;
 }
 .chessboard-cell-click{
-  width: 20px;
-  height: 20px;
-  position: absolute;
-  z-index: 12;
-  margin-right: -10px;
-  margin-bottom: -10px;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    z-index: 12;
+    margin-right: -10px;
+    margin-bottom: -10px;
 }
 .chessboard-cell-black{
-  z-index: 99;
-  margin-right: -10px;
-  margin-bottom: -10px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: #333333;
-  box-shadow: 0px 2px 5px 2px #eee;
+    z-index: 99;
+    margin-right: -10px;
+    margin-bottom: -10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #333333;
+    box-shadow: 0px 2px 5px 2px #eee;
 }
 .chessboard-cell-white{
-  z-index: 99;
-  margin-right: -10px;
-  margin-bottom: -10px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: #fff;
-  box-shadow: 0px 2px 5px 2px rgb(226, 226, 226);
+    z-index: 99;
+    margin-right: -10px;
+    margin-bottom: -10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #fff;
+    box-shadow: 0px 2px 5px 2px rgb(226, 226, 226);
   
 }
