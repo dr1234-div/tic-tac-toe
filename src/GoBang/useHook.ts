@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 /**
  *@description 自定义hook,抽离逻辑代码，防止组件臃肿，封装了下棋的动作监听回调以及游戏获胜的判断方法
@@ -25,11 +25,11 @@ const useHook = () => {
 ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',......
 ]
 */
-    const [chessArr] = useState(() => {
+    const chessArr = useMemo(() => {
         let arr = Array(20).fill('');
         arr = arr.map(() => Array(20).fill(''));
         return arr;
-    });
+    }, []);
 
     // 存储下一个棋子的颜色，用于渲染棋盘上的title
     const [chessman, setChessmMan] = useState<string>('首位：黑棋');
