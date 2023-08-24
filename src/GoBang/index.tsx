@@ -20,6 +20,8 @@ const GobangHook = () => {
 
     // 当前步骤状态存储
     const [currentMove, setCurrentMove] = useState(0);
+
+    // 当前棋盘棋子的状态
     const currentSquares = history[currentMove];
 
     /**
@@ -30,7 +32,7 @@ const GobangHook = () => {
     function playChess (rowIndex: number, colIndex: number) {
         if (chessman === '获胜者：黑棋' || chessman === '获胜者：白棋') return;
 
-        // 每次下棋都会更新history
+        // 每次下棋都会更新history，判断的目的是在游戏结束后阻止继续下棋而导致历史记录跳转按钮的继续渲染
         let nextHistory;
         if (currentSquares === palyArr[palyArr.length - 1]) {
             nextHistory = [...history.slice(0, currentMove + 1)];
@@ -48,6 +50,7 @@ const GobangHook = () => {
      * @return {node} 返回一个节点，用于渲染黑棋或白棋
      */
     const teml = (rowIndex: number, colIndex: number) => {
+        // 根据坐标判断当前位置是否已有棋子，若有根据chess来渲染黑棋或白棋，表示该区域无子，会渲染一个可点击区域，用来处理下棋逻辑
         if (palyArr.find((item: { row: number, col: number, chess: number }) => item.row === rowIndex && item.col === colIndex)) {
             return palyArr.find((item: { row: number, col: number, chess: number }) => item.row === rowIndex && item.col === colIndex)?.chess === 1 ? (
                 <div className="chessboard-cell-black"></div>
@@ -63,7 +66,7 @@ const GobangHook = () => {
         );
     };
 
-    // 记录棋子状态
+    // 渲染棋子历史记录跳转按钮
     const moves = history.map((__, index) => {
         return (
             <li key={index}>
@@ -84,21 +87,21 @@ const GobangHook = () => {
         }
         setCurrentMove(nextMove);
         const nextHistory = history.slice(0, nextMove + 1);
-        const filterArr = nextHistory.filter(value => value !== undefined);
-        const lastFilterArr = filterArr[filterArr.length - 1];
+        const lastFilterArr = nextHistory[nextHistory.length - 1];
         if (lastFilterArr.chess === 2) {
             setChessmMan('下一位：黑棋');
         } else {
             setChessmMan('下一位：白棋');
         }
         setChess(lastFilterArr.chess);
-        setpalyArr(filterArr);
+        setpalyArr(nextHistory);
     }
     return (
         <div className="chessboard-wrapper">
             <div>
                 <h1 className='h1Style'>{chessman}</h1>
                 <div className="chessboard">
+                    {/* 生成20个棋盘行和20个棋盘列 */}
                     {border.map((row, rowIndex) => (
                         <div className="chessboard-row" key={`row + ${rowIndex}`}>
                             {border.map((col, colIndex) => (
