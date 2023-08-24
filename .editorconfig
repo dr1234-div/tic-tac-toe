@@ -1,0 +1,17 @@
+# 该配置文件适用于项目的根目录，并且不会被父级目录中的其他 .editorconfig 文件覆盖。
+root = true
+
+# 匹配所有文件
+[*]
+
+# 使用空格作为缩进风格
+indent_style = space
+
+# 缩进大小为 4 个空格
+indent_size = 4
+
+# charset = utf-8
+charset = utf-8
+
+# 在文件的末尾插入一个空行
+insert_final_newline = true
