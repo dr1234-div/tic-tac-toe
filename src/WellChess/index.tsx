@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Board from './components/Board';
-import { useNavigate } from 'react-router-dom';
 
 /**
  *@description 井子棋组件
@@ -21,7 +20,7 @@ const WellChess = () => {
      * @param {(Array<null | string>)} nextSquares 接受最新的棋子状态数组，
      * @description 下棋动作的监听函数，存储井字棋每个步骤的状态以及最新的步骤索引
      */
-    function handlePlay (nextSquares: Array<null | string>) {
+    function playChess (nextSquares: Array<null | string>) {
         const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
         setHistory(nextHistory);
         setCurrentMove(nextHistory.length - 1);
@@ -40,7 +39,7 @@ const WellChess = () => {
     }
 
     // 动态生成跳转按钮
-    const moves = history.map((squares, move: number) => {
+    const moves = history.map((__, move: number) => {
         let description;
         if (move > 0) {
             description = `跳转到步骤：${move}`;
@@ -53,15 +52,17 @@ const WellChess = () => {
             </li>
         );
     });
-    const navigate = useNavigate();
     return (
         <div className="chessboardWapper">
             <div >
-                <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+                <Board xIsNext={xIsNext} squares={currentSquares} onPlay={playChess} />
             </div>
             <div className='chessboardRight'>
                 <div>
-                    <button className='gameChange' onClick={() => navigate('/gobang')}>五子棋游戏</button>
+                    <button className='gameChange' onClick={() =>
+                        // eslint-disable-next-line no-console
+                        console.log('发生了跳转')
+                    }>五子棋游戏</button>
                 </div>
                 <div className='stateContent'>
                     <ul className="styoo">{moves}</ul>

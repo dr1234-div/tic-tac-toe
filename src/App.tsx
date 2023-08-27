@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
-import WellChess from './WellChess';
+// import WellChess from './WellChess';
+import GobangHook from './GoBang';
 
 /**
  *@description 根节点
@@ -8,7 +9,8 @@ import WellChess from './WellChess';
 const App = () => {
     return (
         <>
-            <WellChess />
+            {/* <WellChess /> */}
+            <GobangHook/>
         </>
     );
 };

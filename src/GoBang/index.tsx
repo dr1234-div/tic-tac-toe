@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './index.css';
 import useGoBang from './useGoBang';
 import type { playArrType } from '../App.d';
@@ -14,7 +13,6 @@ const border = Array(20).fill(null);
  */
 const GobangHook = () => {
     const { play, setPlayArr, chessStatus, setChessStatus, playArr, setChess  } = useGoBang();
-    const navigate = useNavigate();
     const [history, setHistory] = useState<playArrType>([]);
 
     // 当前步骤状态存储
@@ -43,10 +41,10 @@ const GobangHook = () => {
         play(rowIndex, colIndex);
     }
     // 渲染棋子历史记录跳转按钮
-    const moves = history.map((__, index) => {
+    const moves = history.map((__, move: number) => {
         return (
-            <li key={index}>
-                <button onClick={() => jumpTo(index)}>{`跳转到步骤：${Number(index + 1)}`}</button>
+            <li key={move}>
+                <button onClick={() => jumpTo(move)}>{`跳转到步骤：${Number(move + 1)}`}</button>
             </li>
         );
     });
@@ -92,7 +90,10 @@ const GobangHook = () => {
 
             <div className='chessboardRight'>
                 <div>
-                    <button className='gameChange' onClick={() => navigate('/wellchess')}>井棋游戏</button>
+                    <button className='gameChange' onClick={() =>
+                    // eslint-disable-next-line no-console
+                        console.log('发生了跳转')
+                    }>井棋游戏</button>
                 </div>
                 <div className='stateContent'> <ul className="styoo">{moves}</ul></div>
             </div>
