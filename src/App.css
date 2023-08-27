@@ -46,7 +46,7 @@
   
 
 
-  .chessboard-wrapper{
+  .chessboardWapper{
     height: 100vh;
     width: 100%;
     display: flex;
@@ -62,7 +62,7 @@
     align-items: center;
 }
 
-.chessboard-right{
+.chessboardRight{
     margin-left: 120px;
     height: 50%;
     display: flex;
@@ -77,16 +77,16 @@
     font-size: 20px;
 }
 
-.chessboard-row:first-child .chessboard-cell{
+.chessboardRow:first-child .chessboardCell{
     border: none;
 }
-.chessboard-col:first-child .chessboard-cell{
+.chessboardCol:first-child .chessboardCell{
     border: none;
 }
-.chessboard-row{
+.chessboardRow{
     position: relative;
 }
-.chessboard-cell{
+.chessboardCell{
     border: 1px solid rgb(131, 130, 130);
     width: 25px;
     height: 25px;
@@ -95,7 +95,7 @@
     justify-content: flex-end;
     box-sizing: border-box;
 }
-.chessboard-cell-click{
+.chessboardCell-click{
     width: 20px;
     height: 20px;
     position: absolute;
@@ -103,7 +103,7 @@
     margin-right: -10px;
     margin-bottom: -10px;
 }
-.chessboard-cell-black{
+.chessboardCell-black{
     z-index: 99;
     margin-right: -10px;
     margin-bottom: -10px;
@@ -113,7 +113,7 @@
     background-color: #333333;
     box-shadow: 0px 2px 5px 2px #eee;
 }
-.chessboard-cell-white{
+.chessboardCell-white{
     z-index: 99;
     margin-right: -10px;
     margin-bottom: -10px;

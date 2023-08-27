@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Board from './compents/Board';
+import Board from './components/Board';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -55,11 +55,11 @@ const WellChess = () => {
     });
     const navigate = useNavigate();
     return (
-        <div className="chessboard-wrapper">
+        <div className="chessboardWapper">
             <div >
                 <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
             </div>
-            <div className='chessboard-right'>
+            <div className='chessboardRight'>
                 <div>
                     <button className='gameChange' onClick={() => navigate('/gobang')}>五子棋游戏</button>
                 </div>

@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './index.css';
-import useHook from './useHook';
+import useGoBang from './useGoBang';
+import type { playArrType } from '../App.d';
+import ChessType from './components/ChessType';
+// import GoBangBoard from './components/GoBangBoard';
+// 提出来，避免重复计算带来性能消耗
+const border = Array(20).fill(null);
 
 /**
  *@description GobangHook 五子棋的自定义组件
  *@return 渲染棋盘、游戏类型的切换按钮以及历史记录的跳转按钮
  */
 const GobangHook = () => {
-    type palyArrType = {
-        row: number;
-        col: number;
-        chess: number;
-    }[]
-    const { play, setpalyArr, chessman, palyArr, setChess, setChessmMan } = useHook();
+    const { play, setPlayArr, chessStatus, setChessStatus, playArr, setChess  } = useGoBang();
     const navigate = useNavigate();
-    const border = Array(20).fill(null);
-    const [history, setHistory] = useState<palyArrType>([]);
+    const [history, setHistory] = useState<playArrType>([]);
 
     // 当前步骤状态存储
     const [currentMove, setCurrentMove] = useState(0);
@@ -30,42 +29,19 @@ const GobangHook = () => {
      * @description 该函数实现对下棋动作的回调监听，每次执行都会保存以往的历史记录和当前的索引和执行play函数
      */
     function playChess (rowIndex: number, colIndex: number) {
-        if (chessman === '获胜者：黑棋' || chessman === '获胜者：白棋') return;
+        if (chessStatus === '获胜者：黑棋' || chessStatus === '获胜者：白棋') return;
 
         // 每次下棋都会更新history，判断的目的是在游戏结束后阻止继续下棋而导致历史记录跳转按钮的继续渲染
         let nextHistory;
-        if (currentSquares === palyArr[palyArr.length - 1]) {
+        if (currentSquares === playArr[playArr.length - 1]) {
             nextHistory = [...history.slice(0, currentMove + 1)];
         } else {
-            nextHistory = [...history.slice(0, currentMove + 1), palyArr[palyArr.length - 1]];
+            nextHistory = [...history.slice(0, currentMove + 1), playArr[playArr.length - 1]];
         }
         setHistory(nextHistory);
         setCurrentMove(nextHistory.length - 1);
         play(rowIndex, colIndex);
     }
-
-    /**
-     * @param {number} rowIndex 棋子的横坐标
-     * @param {number} colIndex 棋子的纵坐标
-     * @return {node} 返回一个节点，用于渲染黑棋或白棋
-     */
-    const teml = (rowIndex: number, colIndex: number) => {
-        // 根据坐标判断当前位置是否已有棋子，若有根据chess来渲染黑棋或白棋，表示该区域无子，会渲染一个可点击区域，用来处理下棋逻辑
-        if (palyArr.find((item: { row: number, col: number, chess: number }) => item.row === rowIndex && item.col === colIndex)) {
-            return palyArr.find((item: { row: number, col: number, chess: number }) => item.row === rowIndex && item.col === colIndex)?.chess === 1 ? (
-                <div className="chessboard-cell-black"></div>
-            ) : (
-                <div className="chessboard-cell-white"></div>
-            );
-        }
-        return (
-            <div
-                className="chessboard-cell-click"
-                onClick={() => playChess(rowIndex, colIndex)}
-            ></div>
-        );
-    };
-
     // 渲染棋子历史记录跳转按钮
     const moves = history.map((__, index) => {
         return (
@@ -81,33 +57,31 @@ const GobangHook = () => {
      */
     function jumpTo (nextMove: number) {
         // 获胜后将不能进行悔棋
-        if (chessman === '获胜者：黑棋' || chessman === '获胜者：白棋') {
+        if (chessStatus === '获胜者：黑棋' || chessStatus === '获胜者：白棋') {
             alert('注意：获胜后将无法进行悔棋！！！');
             return;
         }
         setCurrentMove(nextMove);
         const nextHistory = history.slice(0, nextMove + 1);
         const lastFilterArr = nextHistory[nextHistory.length - 1];
-        if (lastFilterArr.chess === 2) {
-            setChessmMan('下一位：黑棋');
-        } else {
-            setChessmMan('下一位：白棋');
-        }
+        setChessStatus(`下一位玩家：${lastFilterArr.chess === 1 ? '黑' : '白'}棋`);
+        // newChessStatus = `下一位：${lastFilterArr.chess === 1 ? '黑' : '白'}棋`;
         setChess(lastFilterArr.chess);
-        setpalyArr(nextHistory);
+        setPlayArr(nextHistory);
     }
     return (
-        <div className="chessboard-wrapper">
+        <div className="chessboardWapper">
             <div>
-                <h1 className='h1Style'>{chessman}</h1>
+                <h1 className='h1Style'>{chessStatus}</h1>
                 <div className="chessboard">
                     {/* 生成20个棋盘行和20个棋盘列 */}
+                    {/* <GoBangBoard playArr={playArr} playChess={playChess}/> */}
                     {border.map((row, rowIndex) => (
-                        <div className="chessboard-row" key={`row + ${rowIndex}`}>
+                        <div className="chessboardRow" key={`row + ${rowIndex}`}>
                             {border.map((col, colIndex) => (
-                                <div className="chessboard-col" key={`col + ${colIndex}`}>
-                                    <div className="chessboard-cell">
-                                        {teml(rowIndex, colIndex)}
+                                <div className="chessboardCol" key={`col + ${colIndex}`}>
+                                    <div className="chessboardCell">
+                                        <ChessType rowIndex={ rowIndex } colIndex={colIndex} playArr={playArr} onPlay={playChess}/>
                                     </div>
                                 </div>
                             ))}
@@ -116,7 +90,7 @@ const GobangHook = () => {
                 </div>
             </div>
 
-            <div className='chessboard-right'>
+            <div className='chessboardRight'>
                 <div>
                     <button className='gameChange' onClick={() => navigate('/wellchess')}>井棋游戏</button>
                 </div>
