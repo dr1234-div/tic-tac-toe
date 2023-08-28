@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ChessTypeProps } from '../../App.d';
+import { ChessTypeProps } from '../../App.d';
 /**
  *@param {number} rowIndex 棋子横坐标
  *@param {nummber} colIndex 棋子纵坐标

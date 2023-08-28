@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { playArrType } from '../App.d';
+
 /**
- *@description 自定义hook,抽离逻辑代码，防止组件臃肿，封装了下棋的动作监听回调以及游戏获胜的判断方法
+ * @description 对五子棋不共用的数据和方法进行封装
  */
-const useGoBang = () => {
+const useGoBangIndex = (initialState: number) => {
     // 记录已下的棋子数据，包含横纵坐标以及棋子的颜色,是一个对象数组
     const [playArr, setPlayArr] = useState<playArrType>([]);
     // 存储下一个存储下一个棋子的颜色
@@ -89,14 +90,63 @@ const useGoBang = () => {
             }
         }
     };
+    const [goBangCurrentMove, setGoBangCurrentMove] = useState(initialState);
+    const [goBangHistory, setGoBangHistory] = useState<playArrType>([]);
+    const goBangCurrentSquares = goBangHistory[goBangCurrentMove];
+    /**
+ *
+ *
+ * @param {number} rowIndex
+ * @param {number} colIndex
+ * @return {*}
+ */
+    function goBangPlayChess (rowIndex: number, colIndex: number) {
+        if (chessStatus === '获胜者：黑棋' || chessStatus === '获胜者：白棋') return;
+
+        // 每次下棋都会更新history，判断的目的是在游戏结束后阻止继续下棋而导致历史记录跳转按钮的继续渲染
+        let nextHistory;
+        if (goBangCurrentSquares === playArr[playArr.length - 1]) {
+            nextHistory = [...goBangHistory.slice(0, goBangCurrentMove + 1)];
+        } else {
+            nextHistory = [...goBangHistory.slice(0, goBangCurrentMove + 1), playArr[playArr.length - 1]];
+        }
+        setGoBangHistory(nextHistory);
+        setGoBangCurrentMove(nextHistory.length - 1);
+        play(rowIndex, colIndex);
+    }
+    /**
+         *
+         *
+         * @param {number} nextMove
+         * @return {*}
+         */
+    function goBangJumpTo (nextMove: number) {
+        // 获胜后将不能进行悔棋
+        if (chessStatus === '获胜者：黑棋' || chessStatus === '获胜者：白棋') {
+            alert('注意：获胜后将无法进行悔棋！！！');
+            return;
+        }
+        setGoBangCurrentMove(nextMove);
+        const nextHistory = goBangHistory.slice(0, nextMove + 1);
+        const lastFilterArr = nextHistory[nextHistory.length - 1];
+        setChessStatus(`下一位玩家：${lastFilterArr.chess === 2 ? '黑' : '白'}棋`);
+        setChess(lastFilterArr.chess);
+        setPlayArr(nextHistory);
+    }
 
     return {
-        playArr,
+        goBangCurrentSquares,
+        goBangCurrentMove,
+        goBangHistory,
         chessStatus,
+        playArr,
         setChessStatus,
-        play,
-        setPlayArr,
         setChess,
+        setPlayArr,
+        setGoBangCurrentMove,
+        setGoBangHistory,
+        goBangPlayChess,
+        goBangJumpTo,
     };
 };
-export default useGoBang;
+export default useGoBangIndex;

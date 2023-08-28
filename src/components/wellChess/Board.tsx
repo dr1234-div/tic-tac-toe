@@ -1,6 +1,7 @@
 import React from 'react';
 import Square from './Squre';
-import type { BoardType } from '../../App.d';
+import { BoardType } from '../../App.d';
+
 
 /**
  * @param {boolean} props.xIsNext 下一个是不是X

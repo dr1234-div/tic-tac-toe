@@ -1,6 +1,7 @@
 import React from 'react';
 import ChessType from './ChessType';
-import  { GoBangBoardType } from '../../App.d';
+import { GoBangBoardType } from '../../App.d';
+
 const border = Array(20).fill(null);
 /**
  *@param {playArrType} playArr 已下棋子的数组

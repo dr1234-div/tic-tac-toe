@@ -32,3 +32,15 @@ export type GoBangBoardType = {
     playArr: playArrType;
     playChess: (rowIndex: number, colIndex: number)=>void;
 }
+// 棋盘自定义组件数据类型
+export type ChessBoardType = {
+    goBangIsNext: boolean;
+    xIsNext: boolean;
+    currentSquares: Array<null | string>;
+    onPlayChess: (nextSquares: Array<null | string>) => void;
+    chessStatus: string;
+    border: Array<T>;
+    playArr: playArrType;
+    onGoBangPlayChess: (rowIndex: number, colIndex: number) => void;
+
+}
