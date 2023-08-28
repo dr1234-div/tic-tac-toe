@@ -29,8 +29,9 @@ export type BoardType = {
 }
 // 五子棋棋盘自定义组件数据类型
 export type GoBangBoardType = {
-    playArr: playArrType;
-    playChess: (rowIndex: number, colIndex: number)=>void;
+    border: Array<T>;
+    newPlayArr: playArrType;
+    onPlayChess: (rowIndex: number, colIndex: number) => void;
 }
 // 棋盘自定义组件数据类型
 export type ChessBoardType = {

@@ -1,23 +1,21 @@
 import React from 'react';
 import ChessType from './ChessType';
-import { GoBangBoardType } from '../../App.d';
 
-const border = Array(20).fill(null);
 /**
  *@param {playArrType} playArr 已下棋子的数组
  *@param {void} playChess 下棋动作监听回调
  * @return {*}
  */
-const GoBangBoard = (props:GoBangBoardType) => {
-    const { playArr, playChess } = props;
+const GoBangBoard = (props:any) => {
+    const {  border, newPlayArr, onPlayChess } = props;
     return (
         <>
-            {border.map((rowIndex) => (
+            {border.map((row:number, rowIndex:number) => (
                 <div className="chessboardRow" key={`row + ${rowIndex}`}>
-                    {border.map((colIndex) => (
+                    {border.map((col:number, colIndex:number) => (
                         <div className="chessboardCol" key={`col + ${colIndex}`}>
                             <div className="chessboardCell">
-                                <ChessType rowIndex={ rowIndex } colIndex={colIndex} playArr={playArr} onPlay={playChess}/>
+                                <ChessType rowIndex={ rowIndex } colIndex={colIndex} playArr={newPlayArr} onPlay={onPlayChess}/>
                             </div>
                         </div>
                     ))}

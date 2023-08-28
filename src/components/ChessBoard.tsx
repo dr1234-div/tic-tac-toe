@@ -1,8 +1,7 @@
 import React from 'react';
 import Board from './wellChess/Board';
-import ChessType from './goBang/ChessType';
 import { ChessBoardType } from '../App.d';
-
+import GoBangBoard from './goBang/GoBangBoard';
 
 /**
  *@description 用于渲染不同的棋盘
@@ -16,17 +15,7 @@ const ChessBoard = (props:ChessBoardType) => {
         <>
             <h1 className='h1Style'>{chessStatus}</h1>
             <div className="chessboard">
-                {border.map((row:number, rowIndex:number) => (
-                    <div className="chessboardRow" key={`row + ${rowIndex}`}>
-                        {border.map((col:number, colIndex:number) => (
-                            <div className="chessboardCol" key={`col + ${colIndex}`}>
-                                <div className="chessboardCell">
-                                    <ChessType rowIndex={ rowIndex } colIndex={colIndex} playArr={playArr} onPlay={onGoBangPlayChess}/>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ))}
+                <GoBangBoard border={border} newPlayArr={playArr} onPlayChess={onGoBangPlayChess}/>
             </div>
         </>
     );
