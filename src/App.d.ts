@@ -9,7 +9,7 @@ export type SquareType = {
 export type playArrType = {
     row: number;
     col: number;
-    chess: number;
+    chess: string;
 }[];
 export type ChessTypeProps = {
     rowIndex: number;
@@ -31,6 +31,7 @@ export type BoardType = {
 export type GoBangBoardType = {
     border: Array<T>;
     newPlayArr: playArrType;
+    chessStatus:string;
     onPlayChess: (rowIndex: number, colIndex: number) => void;
 }
 // 棋盘自定义组件数据类型

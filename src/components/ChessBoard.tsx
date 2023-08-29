@@ -11,14 +11,7 @@ const ChessBoard = (props:ChessBoardType) => {
     if (goBangIsNext) {
         return <Board xIsNext={xIsNext} squares={currentSquares} onPlay={onPlayChess} />;
     }
-    return (
-        <>
-            <h1 className='h1Style'>{chessStatus}</h1>
-            <div className="chessboard">
-                <GoBangBoard border={border} newPlayArr={playArr} onPlayChess={onGoBangPlayChess}/>
-            </div>
-        </>
-    );
+    return <GoBangBoard border={border} newPlayArr={playArr} onPlayChess={onGoBangPlayChess} chessStatus={chessStatus}/>;
 };
 
 export default ChessBoard;

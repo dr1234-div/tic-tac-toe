@@ -15,7 +15,7 @@ const App = () => {
     const { currentSquares, currentMove, history, setHistory, setCurrentMove, playChess, jumpTo } = useWellChessIndex(0);
     // 判断下一步是否是X
     const xIsNext = currentMove % 2 === 0;
-    const { goBangHistory, chessStatus, playArr, setChessStatus, setChess, setPlayArr, setGoBangHistory, goBangPlayChess, goBangJumpTo } = useGoBangIndex(0);
+    const { goBangHistory, chess,  playArr, setPlayArr, setGoBangHistory, goBangPlayChess, goBangJumpTo } = useGoBangIndex(0);
     const [goBangIsNext, setGoBangIsNext] = useState<boolean>(true);
 
     // 渲染棋子历史记录跳转按钮
@@ -49,31 +49,29 @@ const App = () => {
         setCurrentMove(0);
         setHistory([Array(9).fill(null)]);
         setGoBangHistory([]);
-        setChessStatus('下一位玩家：黑棋');
-        setChess(null);
         setPlayArr([]);
     };
     return (
-        <div className="chessboardWapper">
+        <div className="chess-board-wapper">
             <div >
                 <ChessBoard
                     goBangIsNext={goBangIsNext}
                     xIsNext={xIsNext}
                     currentSquares={currentSquares}
                     onPlayChess={playChess}
-                    chessStatus={chessStatus}
+                    chessStatus={chess}
                     border={border}
                     playArr={playArr}
                     onGoBangPlayChess={goBangPlayChess}
                 />
             </div>
             {/* 相同点 */}
-            <div className='chessboardRight'>
+            <div className='chess-board-right'>
                 <div>
-                    <button className='gameChange' onClick={() => gameChange(goBangIsNext)}>{goBangIsNext ? '五子棋游戏' : '井棋游戏'}</button>
+                    <button className='game-change' onClick={() => gameChange(goBangIsNext)}>{goBangIsNext ? '五子棋游戏' : '井棋游戏'}</button>
                 </div>
-                <div className='stateContent'>
-                    <ul className="styoo">{goBangIsNext ? moves : goBangMoves}</ul>
+                <div className='state-content'>
+                    <ul className="ul-style">{goBangIsNext ? moves : goBangMoves}</ul>
                 </div>
             </div>
         </div>
