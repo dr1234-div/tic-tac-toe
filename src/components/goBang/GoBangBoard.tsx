@@ -8,10 +8,12 @@ import { GoBangBoardType } from '../../App.d';
  * @return {*}
  */
 const GoBangBoard = (props:GoBangBoardType) => {
-    const {  border, newPlayArr, onPlayChess, chessStatus } = props;
+    const {  border, newPlayArr, onPlayChess, chessStatus, isWinner } = props;
+    let status = '';
+    isWinner ? status = `获胜者: ${isWinner === '先手' ? '黑棋' : '白棋'}` : status = `下一位玩家: ${chessStatus === '先手' ? '黑棋' : '白棋'}`;
     return (
         <>
-            <h1 className='h1-style'>{chessStatus === '先手' ? '下一位：黑棋' : '下一位：白棋'}</h1>
+            <h1 className='h1-style'>{status}</h1>
             <div className="chess-board">
                 {border.map((row:number, rowIndex:number) => (
                     <div className="chess-board-row" key={`row + ${rowIndex}`}>

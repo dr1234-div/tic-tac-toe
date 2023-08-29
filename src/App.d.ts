@@ -1,10 +1,10 @@
-// 文件数据类型
-
-import { MouseEventHandler } from 'react';
-
 // 井棋单元格自定义组件
 export type SquareType = {
-    value: string | null; onSquareClick: MouseEventHandler<HTMLButtonElement> | undefined;
+    value: string | null;
+    rowIndex:number;
+    colIndex:number;
+    onSquareClick: (rowIndex: number, colIndex: number) => void;
+    playArr:playArrType;
 };
 export type playArrType = {
     row: number;
@@ -25,7 +25,11 @@ export type HistoryStepType = {
 }
 // 井棋棋盘自定义组件数据类型
 export type BoardType = {
-    xIsNext: boolean; squares: Array<null | string>; onPlay: (nextSquares: (string | null)[]) => void;
+    xIsNext: string;
+    squares: playArrType;
+    border: Array<T>;
+    onPlay: (rowIndex: number, colIndex: number) => void;
+    isWinner:string;
 }
 // 五子棋棋盘自定义组件数据类型
 export type GoBangBoardType = {
@@ -33,16 +37,15 @@ export type GoBangBoardType = {
     newPlayArr: playArrType;
     chessStatus:string;
     onPlayChess: (rowIndex: number, colIndex: number) => void;
+    isWinner:string;
 }
 // 棋盘自定义组件数据类型
 export type ChessBoardType = {
     goBangIsNext: boolean;
-    xIsNext: boolean;
-    currentSquares: Array<null | string>;
-    onPlayChess: (nextSquares: Array<null | string>) => void;
     chessStatus: string;
     border: Array<T>;
     playArr: playArrType;
-    onGoBangPlayChess: (rowIndex: number, colIndex: number) => void;
+    onPlayChess: (rowIndex: number, colIndex: number) => void;
+    isWinner:string;
 
 }
