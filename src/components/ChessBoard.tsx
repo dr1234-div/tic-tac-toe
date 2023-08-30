@@ -7,13 +7,14 @@ import { useAppSelector } from '../myHooks/useReduxHooks';
  *@description 用于渲染不同的棋盘
  */
 const ChessBoard = (props:ChessBoardType) => {
-    const { goBangIsNext, chessStatus, border, playArr, onPlayChess } = props;
+    const { goBangIsNext, border, onPlayChess } = props;
     const isWinner = useAppSelector((statue) => statue.isWinner);
+    const chess = useAppSelector((statue) => statue.chess);
     let status = '';
     if (goBangIsNext) {
-        isWinner ? status = `获胜者: ${isWinner === '先手' ? 'X' : 'O'}` : status = `下一位玩家: ${chessStatus === '先手' ? 'X' : 'O'}`;
+        isWinner ? status = `获胜者: ${isWinner === '先手' ? 'X' : 'O'}` : status = `下一位玩家: ${chess === '先手' ? 'X' : 'O'}`;
     } else {
-        isWinner ? status = `获胜者: ${isWinner === '先手' ? '黑棋' : '白棋'}` : status = `下一位玩家: ${chessStatus === '先手' ? '黑棋' : '白棋'}`;
+        isWinner ? status = `获胜者: ${isWinner === '先手' ? '黑棋' : '白棋'}` : status = `下一位玩家: ${chess === '先手' ? '黑棋' : '白棋'}`;
     }
     return (
         <>
@@ -23,10 +24,10 @@ const ChessBoard = (props:ChessBoardType) => {
                     <div className= {goBangIsNext ? 'board-row' : 'chess-board-row'}  key={`row + ${rowIndex}`}>
                         {border.map((col:number, colIndex:number) => (
                             goBangIsNext
-                                ?  <ChessType key={(rowIndex * 3) + colIndex} goBangIsNext={goBangIsNext} rowIndex={ rowIndex } colIndex={colIndex} playArr={playArr} onPlay={onPlayChess}/>
+                                ?  <ChessType key={(rowIndex * 3) + colIndex} goBangIsNext={goBangIsNext} rowIndex={ rowIndex } colIndex={colIndex}  onPlay={onPlayChess}/>
                                 :  <div className="chess-board-col" key={`col + ${colIndex}`}>
                                     <div className="chess-board-cell">
-                                        <ChessType goBangIsNext={goBangIsNext} rowIndex={ rowIndex } colIndex={colIndex} playArr={playArr} onPlay={onPlayChess}/>
+                                        <ChessType goBangIsNext={goBangIsNext} rowIndex={ rowIndex } colIndex={colIndex}  onPlay={onPlayChess}/>
                                     </div>
                                 </div>
                         ))}

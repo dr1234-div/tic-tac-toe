@@ -3,6 +3,8 @@ import { playArrType } from '../App.d';
 import { setHistory } from '../store/slice/historySlice';
 import { useAppDispatch, useAppSelector } from './useReduxHooks';
 import { setIsWinner } from '../store/slice/isWinnerSlice';
+import { setChess } from '../store/slice/chessSlice';
+import { setPlayArr } from '../store/slice/playArrSlice';
 
 /**
  * @description 游戏的数据与配置
@@ -15,12 +17,10 @@ const useChessGame = () => {
 
     const history = useAppSelector((statue) => statue.history);
     const isWinner = useAppSelector((statue) => statue.isWinner);
+    const chess = useAppSelector((statue) => statue.chess);
+    const playArr = useAppSelector((statue) => statue.playArr);
     const dispatch = useAppDispatch();
 
-    // 记录已下的棋子数据，包含横纵坐标以及棋子的颜色,是一个对象数组
-    const [playArr, setPlayArr] = useState<playArrType>([]);
-    // 存储下一个存储下一个棋子的类型
-    const [chess, setChess] = useState<string>('先手');
     // 记录棋盘状态
     const [chessArr, setChessArr] = useState(() => {
         let arr = Array(gameConfig.chessBorder).fill('');
@@ -35,12 +35,11 @@ const useChessGame = () => {
      * 棋子活动的历史记录以及判断是否获胜
      */
     const play = (row: number, col: number) => {
-        const newPlayArr = [...playArr, { row, col, chess }];
-        setPlayArr(newPlayArr);
-        const nextHistory = [{ row, col, chess }];
-        dispatch(setHistory(nextHistory));
+        if (isWinner !== '') return;
+        dispatch(setPlayArr([{ row, col, chess }]));
+        dispatch(setHistory([{ row, col, chess }]));
         const newChess = chess === '先手' ? '后手' : '先手';
-        setChess(newChess);
+        dispatch(setChess(newChess));
         getWinner(playArr, chess, chessArr, row, col);
     };
 
@@ -102,17 +101,7 @@ const useChessGame = () => {
             }
         }
     };
-    /**
- *
- *
- * @param {number} rowIndex
- * @param {number} colIndex
- * @return {*}
- */
-    function playChess (rowIndex: number, colIndex: number) {
-        if (isWinner !== '') return;
-        play(rowIndex, colIndex);
-    }
+
     /**
          *
          *
@@ -127,19 +116,15 @@ const useChessGame = () => {
         }
         const nextHistory = history.slice(0, nextMove + 1);
         const lastFilterChess = nextHistory[nextHistory.length - 1].chess === '先手' ? '后手' : '先手';
-        setChess(lastFilterChess);
-        setPlayArr(nextHistory);
+        dispatch(setChess(lastFilterChess));
+        dispatch(setPlayArr(nextHistory));
     }
 
     return {
-        playArr,
-        chess,
         gameConfig,
         serGameConfig,
         setChessArr,
-        setChess,
-        setPlayArr,
-        playChess,
+        play,
         jumpTo,
     };
 };

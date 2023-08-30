@@ -14,7 +14,6 @@ export type playArrType = {
 export type ChessTypeProps = {
     rowIndex: number;
     colIndex: number;
-    playArr: playArrType;
     goBangIsNext: boolean;
     onPlay: (rowIndex: number, colIndex: number) => void;
 };
@@ -43,9 +42,7 @@ export type GoBangBoardType = {
 // 棋盘自定义组件数据类型
 export type ChessBoardType = {
     goBangIsNext: boolean;
-    chessStatus: string;
     border: Array<T>;
-    playArr: playArrType;
     onPlayChess: (rowIndex: number, colIndex: number) => void;
 
 }

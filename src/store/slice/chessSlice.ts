@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 // 使用该类型定义初始 state
-const initialState = '';
+const initialState = '先手';
 
 export const chessSlice = createSlice({
     name: 'chess',

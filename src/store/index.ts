@@ -2,11 +2,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import historyReducer from './slice/historySlice';
 import isWinnerReducer from './slice/isWinnerSlice';
+import chessReducer from './slice/chessSlice';
+import playArrReducer from './slice/playArrSlice';
 
 const store = configureStore({
     reducer: {
         history: historyReducer,
         isWinner: isWinnerReducer,
+        chess: chessReducer,
+        playArr: playArrReducer,
 
     },
 });

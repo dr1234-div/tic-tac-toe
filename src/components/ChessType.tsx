@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChessTypeProps } from '../App.d';
+import { useAppSelector } from '../myHooks/useReduxHooks';
 /**
  *@param {number} rowIndex 棋子横坐标
  *@param {nummber} colIndex 棋子纵坐标
@@ -8,7 +9,8 @@ import { ChessTypeProps } from '../App.d';
  * @return {*}
  */
 const ChessType = (props:ChessTypeProps) => {
-    const { rowIndex, colIndex, playArr, goBangIsNext, onPlay } = props;
+    const { rowIndex, colIndex, goBangIsNext, onPlay } = props;
+    const playArr = useAppSelector((statue) => statue.playArr);
     const haveChess =  playArr.find((item: { row: number, col: number, chess: string }) => item.row === rowIndex && item.col === colIndex);
     // 棋子的配置项
     const chessClass = {

@@ -6,12 +6,14 @@ import ChessBoard from './components/ChessBoard';
 import { useAppDispatch, useAppSelector } from './myHooks/useReduxHooks';
 import { setHistory } from './store/slice/historySlice';
 import { setIsWinner } from './store/slice/isWinnerSlice';
+import { setChess } from './store/slice/chessSlice';
+import { setPlayArr } from './store/slice/playArrSlice';
 
 /**
  *@description 根节点，默认井棋游戏
  */
 const App = () => {
-    const { chess,  playArr, gameConfig, serGameConfig, setChessArr, setChess,  setPlayArr, playChess, jumpTo } = useChessGame();
+    const { gameConfig, serGameConfig, setChessArr, play, jumpTo } = useChessGame();
     const history = useAppSelector((statue) => statue.history);
     const dispatch = useAppDispatch();
     const [goBangIsNext, setGoBangIsNext] = useState<boolean>(true);
@@ -31,7 +33,7 @@ const App = () => {
      */
     const gameChange = (goBangIsNext: boolean) => {
         const changeGameConfig = goBangIsNext === true ? { chessBorder: 20, winCount: 5 } : { chessBorder: 3, winCount: 3 };
-        setChess('先手');
+        dispatch(setChess('先手'));
         dispatch(setIsWinner(''));
         setChessArr(() => {
             let arr = Array(changeGameConfig.chessBorder).fill('');
@@ -41,7 +43,7 @@ const App = () => {
         setGoBangIsNext(!goBangIsNext);
         serGameConfig(changeGameConfig);
         dispatch(setHistory([]));
-        setPlayArr([]);
+        dispatch(setPlayArr([]));
     };
 
     return (
@@ -49,10 +51,8 @@ const App = () => {
             <div >
                 <ChessBoard
                     goBangIsNext={goBangIsNext}
-                    chessStatus={chess}
                     border={border}
-                    playArr={playArr}
-                    onPlayChess={playChess}
+                    onPlayChess={play}
                 />
             </div>
             {/* 相同点 */}
