@@ -8,7 +8,11 @@ import ChessType from './ChessType';
 const ChessBoard = (props:ChessBoardType) => {
     const { goBangIsNext, chessStatus, border, playArr, isWinner, onPlayChess } = props;
     let status = '';
-    isWinner ? status = `获胜者: ${isWinner === '先手' ? '黑棋' : '白棋'}` : status = `下一位玩家: ${chessStatus === '先手' ? '黑棋' : '白棋'}`;
+    if (goBangIsNext) {
+        isWinner ? status = `获胜者: ${isWinner === '先手' ? 'X' : 'O'}` : status = `下一位玩家: ${chessStatus === '先手' ? 'X' : 'O'}`;
+    } else {
+        isWinner ? status = `获胜者: ${isWinner === '先手' ? '黑棋' : '白棋'}` : status = `下一位玩家: ${chessStatus === '先手' ? '黑棋' : '白棋'}`;
+    }
     return (
         <>
             <h1>{status}</h1>
