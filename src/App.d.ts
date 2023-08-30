@@ -47,6 +47,5 @@ export type ChessBoardType = {
     border: Array<T>;
     playArr: playArrType;
     onPlayChess: (rowIndex: number, colIndex: number) => void;
-    isWinner:string;
 
 }

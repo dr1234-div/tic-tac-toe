@@ -3,13 +3,17 @@ import './App.css';
 import useChessGame from './myHooks/useChessGame';
 import { useState } from 'react';
 import ChessBoard from './components/ChessBoard';
+import { useAppDispatch, useAppSelector } from './myHooks/useReduxHooks';
+import { setHistory } from './store/slice/historySlice';
+import { setIsWinner } from './store/slice/isWinnerSlice';
 
 /**
  *@description 根节点，默认井棋游戏
  */
 const App = () => {
-    const { history, chess, isWinner,  playArr, gameConfig, serGameConfig, setIsWinner, setChessArr, setChess,  setPlayArr, setHistory, playChess, jumpTo } = useChessGame();
-
+    const { chess,  playArr, gameConfig, serGameConfig, setChessArr, setChess,  setPlayArr, playChess, jumpTo } = useChessGame();
+    const history = useAppSelector((statue) => statue.history);
+    const dispatch = useAppDispatch();
     const [goBangIsNext, setGoBangIsNext] = useState<boolean>(true);
 
     const border = Array(gameConfig.chessBorder).fill(null);
@@ -28,7 +32,7 @@ const App = () => {
     const gameChange = (goBangIsNext: boolean) => {
         const changeGameConfig = goBangIsNext === true ? { chessBorder: 20, winCount: 5 } : { chessBorder: 3, winCount: 3 };
         setChess('先手');
-        setIsWinner('');
+        dispatch(setIsWinner(''));
         setChessArr(() => {
             let arr = Array(changeGameConfig.chessBorder).fill('');
             arr = arr.map(() => Array(changeGameConfig.chessBorder).fill(''));
@@ -36,7 +40,7 @@ const App = () => {
         });
         setGoBangIsNext(!goBangIsNext);
         serGameConfig(changeGameConfig);
-        setHistory([]);
+        dispatch(setHistory([]));
         setPlayArr([]);
     };
 
@@ -49,7 +53,6 @@ const App = () => {
                     border={border}
                     playArr={playArr}
                     onPlayChess={playChess}
-                    isWinner={isWinner}
                 />
             </div>
             {/* 相同点 */}

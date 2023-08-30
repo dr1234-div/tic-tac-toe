@@ -1,12 +1,14 @@
 import React from 'react';
 import { ChessBoardType } from '../App.d';
 import ChessType from './ChessType';
+import { useAppSelector } from '../myHooks/useReduxHooks';
 
 /**
  *@description 用于渲染不同的棋盘
  */
 const ChessBoard = (props:ChessBoardType) => {
-    const { goBangIsNext, chessStatus, border, playArr, isWinner, onPlayChess } = props;
+    const { goBangIsNext, chessStatus, border, playArr, onPlayChess } = props;
+    const isWinner = useAppSelector((statue) => statue.isWinner);
     let status = '';
     if (goBangIsNext) {
         isWinner ? status = `获胜者: ${isWinner === '先手' ? 'X' : 'O'}` : status = `下一位玩家: ${chessStatus === '先手' ? 'X' : 'O'}`;
