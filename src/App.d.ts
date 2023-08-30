@@ -15,6 +15,7 @@ export type ChessTypeProps = {
     rowIndex: number;
     colIndex: number;
     playArr: playArrType;
+    goBangIsNext: boolean;
     onPlay: (rowIndex: number, colIndex: number) => void;
 };
 

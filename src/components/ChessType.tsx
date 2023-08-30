@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChessTypeProps } from '../../App.d';
+import { ChessTypeProps } from '../App.d';
 /**
  *@param {number} rowIndex 棋子横坐标
  *@param {nummber} colIndex 棋子纵坐标
@@ -8,15 +8,31 @@ import { ChessTypeProps } from '../../App.d';
  * @return {*}
  */
 const ChessType = (props:ChessTypeProps) => {
-    const { rowIndex, colIndex, playArr, onPlay } = props;
+    const { rowIndex, colIndex, playArr, goBangIsNext, onPlay } = props;
     const haveChess =  playArr.find((item: { row: number, col: number, chess: string }) => item.row === rowIndex && item.col === colIndex);
+    // 棋子的配置项
+    const chessClass = {
+        hasChess: '',
+        noChess: '',
+        chessType: '',
+    };
+    if (goBangIsNext) {
+        chessClass.hasChess = 'square';
+        chessClass.noChess = 'square';
+        chessClass.chessType = haveChess?.chess === '先手' ? 'X' : 'O';
+    } else {
+        chessClass.hasChess = haveChess?.chess === '先手' ? 'chess-board-cell-black' : 'chess-board-cell-white',
+        chessClass.noChess = 'chess-board-cell-click';
+        chessClass.chessType = '';
+    }
+
     // 根据坐标判断当前位置是否已有棋子，若有根据chess来渲染黑棋或白棋，表示该区域无子，会渲染一个可点击区域，用来处理下棋逻辑
     if (haveChess) {
-        return  <div className={haveChess?.chess === '先手' ? 'chess-board-cell-black' : 'chess-board-cell-white'}></div>;
+        return  <div className={chessClass.hasChess}>{chessClass.chessType}</div>;
     }
     return (
         <div
-            className="chess-board-cell-click"
+            className={chessClass.noChess}
             onClick={() => onPlay(rowIndex, colIndex)}
         ></div>
     );
