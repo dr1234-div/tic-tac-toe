@@ -14,7 +14,7 @@ interface App {
     props:propType;
 }
 
-class App extends Component {
+class App extends Component<propType> {
     // 声明状态
     constructor (props:propType) {
         super(props);
@@ -175,4 +175,4 @@ const mapStateToProps = (state:propType) => {
  * @return {*}
  */
 const mapDispatchToProps =  { setHistory, setPlayArr, setChess, setIsWinner };
-export default  connect(mapStateToProps, mapDispatchToProps)(App  as React.ComponentClass<propType>);
+export default  connect(mapStateToProps, mapDispatchToProps)(App);
