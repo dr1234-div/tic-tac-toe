@@ -1,43 +1,53 @@
-import React from 'react';
-import { ChessTypeProps } from '../App.d';
-import { useAppSelector } from '../myHooks/useReduxHooks';
-/**
- *@param {number} rowIndex 棋子横坐标
- *@param {nummber} colIndex 棋子纵坐标
- @param {array} playArr 棋盘上已下棋子的数据数组，包含其横纵坐标以及该棋子的颜色
- @param {void} onPlay 下棋动作的监听回调
- * @return {*}
- */
-const ChessType = (props:ChessTypeProps) => {
-    const { rowIndex, colIndex, goBangIsNext, onPlay } = props;
-    const playArr = useAppSelector((statue) => statue.playArr);
-    const haveChess =  playArr.find((item: { row: number, col: number, chess: string }) => item.row === rowIndex && item.col === colIndex);
-    // 棋子的配置项
-    const chessClass = {
-        hasChess: '',
-        noChess: '',
-        chessType: '',
-    };
-    if (goBangIsNext) {
-        chessClass.hasChess = 'square';
-        chessClass.noChess = 'square';
-        chessClass.chessType = haveChess?.chess === '先手' ? 'X' : 'O';
-    } else {
-        chessClass.hasChess = haveChess?.chess === '先手' ? 'chess-board-cell-black' : 'chess-board-cell-white',
-        chessClass.noChess = 'chess-board-cell-click';
-        chessClass.chessType = '';
+import React, { Component } from 'react';
+import { ChessStateType, ChessTypeProps, propType } from '../App.d';
+import { connect } from 'react-redux';
+interface ChessType {
+    state:ChessStateType;
+    props:ChessTypeProps;
+}
+class ChessType extends Component {
+    constructor (props: ChessTypeProps) {
+        super(props);
     }
+    render () {
+        // 棋子的配置项
+        const chessClass = {
+            hasChess: '',
+            noChess: '',
+            chessType: '',
+        };
+        const { rowIndex, colIndex, playArr, goBangIsNext, onPlay } = this.props;
+        const haveChess = playArr.find((item: { row: number, col: number, chess: string }) =>
+            item.row === rowIndex && item.col === colIndex);
 
-    // 根据坐标判断当前位置是否已有棋子，若有根据chess来渲染黑棋或白棋，表示该区域无子，会渲染一个可点击区域，用来处理下棋逻辑
-    if (haveChess) {
-        return  <div className={chessClass.hasChess}>{chessClass.chessType}</div>;
+        if (goBangIsNext) {
+            chessClass.hasChess = 'square';
+            chessClass.noChess = 'square';
+            chessClass.chessType = haveChess?.chess === '先手' ? 'X' : 'O';
+        } else {
+            chessClass.hasChess = haveChess?.chess === '先手' ? 'chess-board-cell-black' : 'chess-board-cell-white',
+            chessClass.noChess = 'chess-board-cell-click';
+            chessClass.chessType = '';
+        }
+
+        if (haveChess) {
+            return  <div className={chessClass.hasChess}>{chessClass.chessType}</div>;
+        }
+        return (
+            <div
+                className={chessClass.noChess}
+                onClick={() => onPlay(rowIndex, colIndex)}
+            ></div>
+        );
     }
-    return (
-        <div
-            className={chessClass.noChess}
-            onClick={() => onPlay(rowIndex, colIndex)}
-        ></div>
-    );
+}
+
+/**
+ * @param {propType} state
+ * @return {*} 将redux中的playArr数据映射到当前组件的props
+ */
+const mapStateToProps = (state:propType) => {
+    return { playArr: state.playArr };
 };
 
-export default ChessType;
+export default connect(mapStateToProps)(ChessType as React.ComponentClass<ChessTypeProps>);

@@ -15,6 +15,7 @@ export type ChessTypeProps = {
     rowIndex: number;
     colIndex: number;
     goBangIsNext: boolean;
+    playArr: playArrType;
     onPlay: (rowIndex: number, colIndex: number) => void;
 };
 
@@ -44,5 +45,31 @@ export type ChessBoardType = {
     goBangIsNext: boolean;
     border: Array<T>;
     onPlayChess: (rowIndex: number, colIndex: number) => void;
+    isWinner:string;
+    chess: string;
+}
 
+export type StateType = {
+    goBangIsNext: boolean;
+    gameConfig: { chessBorder: number, winCount: number };
+    chessArr: playArrType[];
+};
+// redux中的数据和方法，为connt提供类型
+export type propType = {
+    history: playArrType;
+    isWinner: string;
+    chess: string;
+    playArr: playArrType;
+    setHistory: (value: playArrType) => void;
+    setPlayArr: (value: playArrType) => void;
+    setChess: (value: string) => void;
+    setIsWinner: (value: string) => void;
+
+}
+export type ChessStateType = {
+    chessClass: {
+        hasChess: string;
+        noChess: string;
+        chessType: string;
+    };
 }

@@ -1,43 +1,51 @@
-import React from 'react';
-import { ChessBoardType } from '../App.d';
+import React, { Component } from 'react';
+import { ChessBoardType, propType } from '../App.d';
+import { connect } from 'react-redux';
 import ChessType from './ChessType';
-import { useAppSelector } from '../myHooks/useReduxHooks';
 
-/**
- *@description 用于渲染不同的棋盘
- */
-const ChessBoard = (props:ChessBoardType) => {
-    const { goBangIsNext, border, onPlayChess } = props;
-    const isWinner = useAppSelector((statue) => statue.isWinner);
-    const chess = useAppSelector((statue) => statue.chess);
-    let status = '';
-    if (goBangIsNext) {
-        isWinner ? status = `获胜者: ${isWinner === '先手' ? 'X' : 'O'}` : status = `下一位玩家: ${chess === '先手' ? 'X' : 'O'}`;
-    } else {
-        isWinner ? status = `获胜者: ${isWinner === '先手' ? '黑棋' : '白棋'}` : status = `下一位玩家: ${chess === '先手' ? '黑棋' : '白棋'}`;
+class ChessBoard extends Component<ChessBoardType> {
+    constructor (props: ChessBoardType) {
+        super(props);
     }
-    return (
-        <>
-            <h1>{status}</h1>
-            <div className= {goBangIsNext ? '' : 'chess-board'} >
-                {border.map((row:number, rowIndex:number) => (
-                    <div className= {goBangIsNext ? 'board-row' : 'chess-board-row'}  key={`row + ${rowIndex}`}>
-                        {border.map((col:number, colIndex:number) => (
-                            goBangIsNext
-                                ?  <ChessType key={(rowIndex * 3) + colIndex} goBangIsNext={goBangIsNext} rowIndex={ rowIndex } colIndex={colIndex}  onPlay={onPlayChess}/>
-                                :  <div className="chess-board-col" key={`col + ${colIndex}`}>
-                                    <div className="chess-board-cell">
-                                        <ChessType goBangIsNext={goBangIsNext} rowIndex={ rowIndex } colIndex={colIndex}  onPlay={onPlayChess}/>
+    render () {
+        const { goBangIsNext, border, onPlayChess, isWinner, chess } = this.props;
+        let status = '';
+        if (goBangIsNext) {
+            isWinner ? status = `获胜者: ${isWinner === '先手' ? 'X' : 'O'}` : status = `下一位玩家: ${chess === '先手' ? 'X' : 'O'}`;
+        } else {
+            isWinner ? status = `获胜者: ${isWinner === '先手' ? '黑棋' : '白棋'}` : status = `下一位玩家: ${chess === '先手' ? '黑棋' : '白棋'}`;
+        }
+        return (
+            <>
+                <h1>{status}</h1>
+                <div className= {goBangIsNext ? '' : 'chess-board'} >
+                    {border.map((row:number, rowIndex:number) => (
+                        <div className= {goBangIsNext ? 'board-row' : 'chess-board-row'}  key={`row + ${rowIndex}`}>
+                            {border.map((col:number, colIndex:number) => (
+                                goBangIsNext
+                                    ?  <ChessType key={(rowIndex * 3) + colIndex} goBangIsNext={goBangIsNext} rowIndex={ rowIndex } colIndex={colIndex}  onPlay={onPlayChess}/>
+                                    :  <div className="chess-board-col" key={`col + ${colIndex}`}>
+                                        <div className="chess-board-cell">
+                                            <ChessType goBangIsNext={goBangIsNext} rowIndex={ rowIndex } colIndex={colIndex}  onPlay={onPlayChess}/>
+                                        </div>
                                     </div>
-                                </div>
-                        ))}
+                            ))}
 
-                    </div>
-                ))}
-            </div>
-        </>
-
-    );
+                        </div>
+                    ))}
+                </div>
+            </>
+        );
+    }
+}
+/**
+ * @param {propType} state
+ * @return {*} 将redux中的playArr数据映射到当前组件的props
+ */
+const mapStateToProps = (state:propType) => {
+    return {
+        isWinner: state.isWinner,
+        chess: state.chess,
+    };
 };
-
-export default ChessBoard;
+export default connect(mapStateToProps)(ChessBoard);
