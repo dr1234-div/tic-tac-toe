@@ -46,3 +46,10 @@ export type ChessBoardType = {
     onPlayChess: (rowIndex: number, colIndex: number) => void;
 
 }
+// 切片的数据类型定义
+export type sliceType = {
+    chess: string;
+    history: playArrType;
+    isWinner: string;
+    playArr: playArrType;
+}

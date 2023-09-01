@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { playArrType } from '../App.d';
-import { setHistory } from '../store/slice/historySlice';
+import { setHistory, setIsWinner, setChess, setPlayArr } from '../store/slice';
 import { useAppDispatch, useAppSelector } from './useReduxHooks';
-import { setIsWinner } from '../store/slice/isWinnerSlice';
-import { setChess } from '../store/slice/chessSlice';
-import { setPlayArr } from '../store/slice/playArrSlice';
 
 /**
  * @description 游戏的数据与配置
@@ -22,11 +19,8 @@ const useChessGame = () => {
     const dispatch = useAppDispatch();
 
     // 记录棋盘状态
-    const [chessArr, setChessArr] = useState(() => {
-        let arr = Array(gameConfig.chessBorder).fill('');
-        arr = arr.map(() => Array(gameConfig.chessBorder).fill(''));
-        return arr;
-    });
+    const [chessArr, setChessArr] = useState(Array(20).fill('')
+        .map(() => Array(20).fill('')));
 
     /**
      * @param {number} row 棋子横坐标
@@ -36,8 +30,8 @@ const useChessGame = () => {
      */
     const play = (row: number, col: number) => {
         if (isWinner !== '') return;
-        dispatch(setPlayArr([{ row, col, chess }]));
-        dispatch(setHistory([{ row, col, chess }]));
+        dispatch(setPlayArr([...playArr, { row, col, chess }]));
+        dispatch(setHistory([...playArr, { row, col, chess }]));
         const newChess = chess === '先手' ? '后手' : '先手';
         dispatch(setChess(newChess));
         getWinner(playArr, chess, chessArr, row, col);
