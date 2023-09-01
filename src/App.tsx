@@ -42,14 +42,16 @@ class App extends Component<propType> {
     };
     // 下棋的回调
     play = (row: number, col: number) => {
-        if (this.props.isWinner !== '') return;
+        const { isWinner, playArr, chess, setPlayArr, setHistory, setChess } = this.props;
+        const { chessArr } = this.state;
+        if (isWinner !== '') return;
         // 创建一个新数组传给setPlayArr，如果直接传递，则地址相同只会接收新棋子的状态
-        const newPlayArr = [...this.props.playArr, { row, col, chess: this.props.chess }].slice();
-        this.props.setPlayArr(newPlayArr);
-        this.props.setHistory(newPlayArr);
-        const newChess = this.props.chess === '先手' ? '后手' : '先手';
-        this.props.setChess(newChess);
-        this.getWinner(this.props.playArr, this.props.chess, this.state.chessArr, row, col);
+        const newPlayArr = [...playArr, { row, col, chess }].slice();
+        setPlayArr(newPlayArr);
+        setHistory(newPlayArr);
+        const newChess = chess === '先手' ? '后手' : '先手';
+        setChess(newChess);
+        this.getWinner(playArr, chess, chessArr, row, col);
     };
     // 游戏获胜的方法
     getWinner = (
@@ -59,6 +61,8 @@ class App extends Component<propType> {
         row: number,
         col: number
     ) => {
+        const { setIsWinner } = this.props;
+        const { gameConfig } = this.state;
         const directions = [
             // 水平方向
             [0, 1],
@@ -96,54 +100,58 @@ class App extends Component<propType> {
                 newColndex -= dy;
             }
             // 判断是否连续有五个相同的棋子
-            if (count >= this.state.gameConfig.winCount) {
-                this.props.setIsWinner(chess);
+            if (count >= gameConfig.winCount) {
+                setIsWinner(chess);
                 return chess;
             }
         }
     };
     // 历史记录的跳转方式
     jumpTo = (nextMove: number) => {
+        const { isWinner,  history, setPlayArr,  setChess } = this.props;
         // 获胜后将不能进行悔棋
-        if (this.props.isWinner !== '') {
+        if (isWinner !== '') {
             alert('注意：获胜后将无法进行悔棋！！！');
             return;
         }
-        const nextHistory = this.props.history.slice(0, nextMove + 1);
+        const nextHistory = history.slice(0, nextMove + 1);
         const lastFilterChess = nextHistory[nextHistory.length - 1].chess === '先手' ? '后手' : '先手';
-        this.props.setChess(lastFilterChess);
-        this.props.setPlayArr(nextHistory);
+        setChess(lastFilterChess);
+        setPlayArr(nextHistory);
     };
     // 切换游戏后对游戏相关数据进行初始化
     gameChange = (goBangIsNext: boolean) => {
+        const { setPlayArr, setHistory, setChess, setIsWinner } = this.props;
         const changeGameConfig = goBangIsNext === true ? { chessBorder: 20, winCount: 5 } : { chessBorder: 3, winCount: 3 };
-        this.props.setChess('先手');
-        this.props.setIsWinner('');
+        setChess('先手');
+        setIsWinner('');
         this.setChessArr(Array(20).fill('')
             .map(() => Array(20).fill('')));
         this.setGoBangIsNext();
         this.serGameConfig(changeGameConfig);
-        this.props.setHistory([]);
-        this.props.setPlayArr([]);
+        setHistory([]);
+        setPlayArr([]);
     };
 
     render () {
+        const { goBangIsNext, gameConfig } = this.state;
+        const { history } = this.props;
         return (
             <div className="chess-board-wapper">
                 <div>
                     <ChessBoard
-                        goBangIsNext={this.state.goBangIsNext}
-                        border={Array(this.state.gameConfig.chessBorder).fill(null)}
+                        goBangIsNext={goBangIsNext}
+                        border={Array(gameConfig.chessBorder).fill(null)}
                         onPlayChess={this.play}
                     />
                 </div>
                 {/* 相同点 */}
                 <div className='chess-board-right'>
                     <div>
-                        <button className='game-change' onClick={() => this.gameChange(this.state.goBangIsNext)}>{this.state.goBangIsNext ? '五子棋游戏' : '井棋游戏'}</button>
+                        <button className='game-change' onClick={() => this.gameChange(goBangIsNext)}>{goBangIsNext ? '五子棋游戏' : '井棋游戏'}</button>
                     </div>
                     <div className='state-content'>
-                        <ul className="ul-style">{this.props.history.map((__, move: number) => {
+                        <ul className="ul-style">{history.map((__, move: number) => {
                             return (
                                 <li key={move}>
                                     <button onClick={() => this.jumpTo(move)}>{`跳转到步骤：${Number(move + 1)}`}</button>
