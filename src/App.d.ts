@@ -73,3 +73,10 @@ export type ChessStateType = {
         chessType: string;
     };
 }
+// 切片的数据类型定义
+export type sliceType = {
+    chess: string;
+    history: playArrType;
+    isWinner: string;
+    playArr: playArrType;
+}

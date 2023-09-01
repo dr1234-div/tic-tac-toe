@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
 import ChessBoard from './components/ChessBoard';
-import { setHistory } from './store/slice/historySlice';
-import { setIsWinner } from './store/slice/isWinnerSlice';
-import { setChess } from './store/slice/chessSlice';
-import { setPlayArr } from './store/slice/playArrSlice';
+import { setHistory, setIsWinner, setChess, setPlayArr } from './store/slice';
 import { StateType, playArrType, propType } from './App.d';
 import { connect } from 'react-redux';
-
 
 interface App {
     state: StateType;
@@ -45,10 +41,8 @@ class App extends Component<propType> {
         const { isWinner, playArr, chess, setPlayArr, setHistory, setChess } = this.props;
         const { chessArr } = this.state;
         if (isWinner !== '') return;
-        // 创建一个新数组传给setPlayArr，如果直接传递，则地址相同只会接收新棋子的状态
-        const newPlayArr = [...playArr, { row, col, chess }].slice();
-        setPlayArr(newPlayArr);
-        setHistory(newPlayArr);
+        setPlayArr([...playArr, { row, col, chess }]);
+        setHistory([...playArr, { row, col, chess }]);
         const newChess = chess === '先手' ? '后手' : '先手';
         setChess(newChess);
         this.getWinner(playArr, chess, chessArr, row, col);
