@@ -22,6 +22,7 @@ class App extends Component<propType> {
             },
             chessArr: Array(3).fill('')
                 .map(() => Array(3).fill('')),
+            aiChessType: '先手',
         };
     }
     // 修改goBangIsNext的方法
@@ -135,9 +136,12 @@ class App extends Component<propType> {
         setHistory([]);
         setPlayArr([]);
     };
-
+    // 通过单选框按钮更新ai为先手还是后手
+    handleAiChessTypeChange = (value:string) => {
+        this.setState({ aiChessType: value });
+    };
     render () {
-        const { goBangIsNext, gameConfig } = this.state;
+        const { goBangIsNext, gameConfig, aiChessType } = this.state;
         const { history } = this.props;
         return (
             <div className="chess-board-wapper">
@@ -161,6 +165,20 @@ class App extends Component<propType> {
                                 </li>
                             );
                         })}</ul>
+                    </div>
+                </div>
+                <div className='chess-board-right'>
+                    <div><button className='game-change'>关闭AI对战</button></div>
+                    <div className='state-content'>
+                        <div>
+                            <input type="radio" id="onTheMoveAi" name="Ai" value="onTheMoveAi" checked={aiChessType === '先手'}  onChange={() => this.handleAiChessTypeChange('先手')}/>
+                            <label htmlFor="onTheMoveAi">AI先手</label>
+                        </div>
+
+                        <div>
+                            <input type="radio" id="subsequentHolderAi" name="Ai" value="subsequentHolderAi" checked={aiChessType === '后手'} onChange={() => this.handleAiChessTypeChange('后手')}/>
+                            <label htmlFor="subsequentHolderAi">AI后手</label>
+                        </div>
                     </div>
                 </div>
             </div>
