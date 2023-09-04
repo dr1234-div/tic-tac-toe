@@ -8,13 +8,13 @@ import { useAppSelector } from '../myHooks/useReduxHooks';
  */
 const ChessBoard = (props:ChessBoardType) => {
     const { goBangIsNext, border, onPlayChess } = props;
-    const isWinner = useAppSelector((statue) => statue.isWinner);
+    const winner = useAppSelector((statue) => statue.winner);
     const chess = useAppSelector((statue) => statue.chess);
     let status = '';
     if (goBangIsNext) {
-        isWinner ? status = `获胜者: ${isWinner === '先手' ? 'X' : 'O'}` : status = `下一位玩家: ${chess === '先手' ? 'X' : 'O'}`;
+        winner ? status = `获胜者: ${winner === '先手' ? 'X' : 'O'}` : status = `下一位玩家: ${chess === '先手' ? 'X' : 'O'}`;
     } else {
-        isWinner ? status = `获胜者: ${isWinner === '先手' ? '黑棋' : '白棋'}` : status = `下一位玩家: ${chess === '先手' ? '黑棋' : '白棋'}`;
+        winner ? status = `获胜者: ${winner === '先手' ? '黑棋' : '白棋'}` : status = `下一位玩家: ${chess === '先手' ? '黑棋' : '白棋'}`;
     }
     return (
         <>

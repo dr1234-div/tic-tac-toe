@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { playArrType } from '../App.d';
-import { setHistory, setIsWinner, setChess, setPlayArr } from '../store/slice';
+import { setHistory, setWinner, setChess, setPlayArr } from '../store/slice';
 import { useAppDispatch, useAppSelector } from './useReduxHooks';
 
 /**
@@ -13,14 +13,14 @@ const useChessGame = () => {
     });
 
     const history = useAppSelector((statue) => statue.history);
-    const isWinner = useAppSelector((statue) => statue.isWinner);
+    const winner = useAppSelector((statue) => statue.winner);
     const chess = useAppSelector((statue) => statue.chess);
     const playArr = useAppSelector((statue) => statue.playArr);
     const dispatch = useAppDispatch();
 
     // 记录棋盘状态
-    const [chessArr, setChessArr] = useState(Array(20).fill('')
-        .map(() => Array(20).fill('')));
+    const [chessArr, setChessArr] = useState(Array(3).fill('')
+        .map(() => Array(3).fill('')));
 
     /**
      * @param {number} row 棋子横坐标
@@ -29,7 +29,7 @@ const useChessGame = () => {
      * 棋子活动的历史记录以及判断是否获胜
      */
     const play = (row: number, col: number) => {
-        if (isWinner !== '') return;
+        if (winner !== '') return;
         dispatch(setPlayArr([...playArr, { row, col, chess }]));
         dispatch(setHistory([...playArr, { row, col, chess }]));
         const newChess = chess === '先手' ? '后手' : '先手';
@@ -74,7 +74,11 @@ const useChessGame = () => {
             // 向正方向遍历
             let newRowIndex = row + dx;
             let newColndex = col + dy;
-            while (newRowIndex >= 0 && newRowIndex < updatedChessArr.length && newColndex >= 0 && newColndex < updatedChessArr.length && updatedChessArr[newRowIndex][newColndex].chess === chess) {
+            while (newRowIndex >= 0 &&
+                newRowIndex < updatedChessArr.length &&
+                newColndex >= 0 &&
+                newColndex < updatedChessArr.length &&
+                updatedChessArr[newRowIndex][newColndex].chess === chess) {
                 count++;
                 newRowIndex += dx;
                 newColndex += dy;
@@ -83,14 +87,18 @@ const useChessGame = () => {
             // 向负方向遍历
             newRowIndex = row - dx;
             newColndex = col - dy;
-            while (newRowIndex >= 0 && newRowIndex < updatedChessArr.length && newColndex >= 0 && newColndex < updatedChessArr.length && updatedChessArr[newRowIndex][newColndex].chess === chess) {
+            while (newRowIndex >= 0 &&
+                newRowIndex < updatedChessArr.length &&
+                newColndex >= 0 &&
+                newColndex < updatedChessArr.length &&
+                updatedChessArr[newRowIndex][newColndex].chess === chess) {
                 count++;
                 newRowIndex -= dx;
                 newColndex -= dy;
             }
             // 判断是否连续有五个相同的棋子
             if (count >= gameConfig.winCount) {
-                dispatch(setIsWinner(chess));
+                dispatch(setWinner(chess));
                 return chess;
             }
         }
@@ -104,7 +112,7 @@ const useChessGame = () => {
          */
     function jumpTo (nextMove: number) {
         // 获胜后将不能进行悔棋
-        if (isWinner !== '') {
+        if (winner !== '') {
             alert('注意：获胜后将无法进行悔棋！！！');
             return;
         }

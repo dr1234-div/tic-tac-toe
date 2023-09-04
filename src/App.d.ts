@@ -29,7 +29,7 @@ export type BoardType = {
     squares: playArrType;
     border: Array<T>;
     onPlay: (rowIndex: number, colIndex: number) => void;
-    isWinner:string;
+    winner:string;
 }
 // 五子棋棋盘自定义组件数据类型
 export type GoBangBoardType = {
@@ -37,7 +37,7 @@ export type GoBangBoardType = {
     newPlayArr: playArrType;
     chessStatus:string;
     onPlayChess: (rowIndex: number, colIndex: number) => void;
-    isWinner:string;
+    winner:string;
 }
 // 棋盘自定义组件数据类型
 export type ChessBoardType = {
@@ -50,6 +50,6 @@ export type ChessBoardType = {
 export type sliceType = {
     chess: string;
     history: playArrType;
-    isWinner: string;
+    winner: string;
     playArr: playArrType;
 }

@@ -4,7 +4,7 @@ import useChessGame from './myHooks/useChessGame';
 import { useState } from 'react';
 import ChessBoard from './components/ChessBoard';
 import { useAppDispatch, useAppSelector } from './myHooks/useReduxHooks';
-import { setHistory, setIsWinner, setChess, setPlayArr } from './store/slice';
+import { setHistory, setWinner, setChess, setPlayArr } from './store/slice';
 
 /**
  *@description 根节点，默认井棋游戏
@@ -31,9 +31,9 @@ const App = () => {
     const gameChange = (goBangIsNext: boolean) => {
         const changeGameConfig = goBangIsNext === true ? { chessBorder: 20, winCount: 5 } : { chessBorder: 3, winCount: 3 };
         dispatch(setChess('先手'));
-        dispatch(setIsWinner(''));
-        setChessArr(Array(20).fill('')
-            .map(() => Array(20).fill('')));
+        dispatch(setWinner(''));
+        setChessArr(Array(changeGameConfig.chessBorder).fill('')
+            .map(() => Array(changeGameConfig.chessBorder).fill('')));
         setGoBangIsNext(!goBangIsNext);
         serGameConfig(changeGameConfig);
         dispatch(setHistory([]));
