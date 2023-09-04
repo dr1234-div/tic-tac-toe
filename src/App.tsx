@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import ChessBoard from './components/ChessBoard';
-import { setHistory, setIsWinner, setChess, setPlayArr } from './store/slice';
+import { setHistory, setWinner, setChess, setPlayArr } from './store/slice';
 import { StateType, playArrType, propType } from './App.d';
 import { connect } from 'react-redux';
 
@@ -20,8 +20,8 @@ class App extends Component<propType> {
                 chessBorder: 3,
                 winCount: 3,
             },
-            chessArr: Array(20).fill('')
-                .map(() => Array(20).fill('')),
+            chessArr: Array(3).fill('')
+                .map(() => Array(3).fill('')),
         };
     }
     // 修改goBangIsNext的方法
@@ -38,9 +38,9 @@ class App extends Component<propType> {
     };
     // 下棋的回调
     play = (row: number, col: number) => {
-        const { isWinner, playArr, chess, setPlayArr, setHistory, setChess } = this.props;
+        const { winner, playArr, chess, setPlayArr, setHistory, setChess } = this.props;
         const { chessArr } = this.state;
-        if (isWinner !== '') return;
+        if (winner !== '') return;
         setPlayArr([...playArr, { row, col, chess }]);
         setHistory([...playArr, { row, col, chess }]);
         const newChess = chess === '先手' ? '后手' : '先手';
@@ -55,7 +55,7 @@ class App extends Component<propType> {
         row: number,
         col: number
     ) => {
-        const { setIsWinner } = this.props;
+        const { setWinner } = this.props;
         const { gameConfig } = this.state;
         const directions = [
             // 水平方向
@@ -67,6 +67,7 @@ class App extends Component<propType> {
             // 左斜方向
             [-1, 1],
         ];
+        // 声明新变量来接收，不会影响原始数据
         const updatedChessArr = Array.from(chessArr, (item) => [...item]);
         playArr.forEach((item) => {
             updatedChessArr[item.row][item.col] = { ...item };
@@ -79,7 +80,11 @@ class App extends Component<propType> {
             // 向正方向遍历
             let newRowIndex = row + dx;
             let newColndex = col + dy;
-            while (newRowIndex >= 0 && newRowIndex < updatedChessArr.length && newColndex >= 0 && newColndex < updatedChessArr.length && updatedChessArr[newRowIndex][newColndex].chess === chess) {
+            while (newRowIndex >= 0 &&
+                newRowIndex < updatedChessArr.length &&
+                newColndex >= 0 &&
+                newColndex < updatedChessArr.length &&
+                updatedChessArr[newRowIndex][newColndex].chess === chess) {
                 count++;
                 newRowIndex += dx;
                 newColndex += dy;
@@ -88,23 +93,27 @@ class App extends Component<propType> {
             // 向负方向遍历
             newRowIndex = row - dx;
             newColndex = col - dy;
-            while (newRowIndex >= 0 && newRowIndex < updatedChessArr.length && newColndex >= 0 && newColndex < updatedChessArr.length && updatedChessArr[newRowIndex][newColndex].chess === chess) {
+            while (newRowIndex >= 0 &&
+                newRowIndex < updatedChessArr.length &&
+                newColndex >= 0 &&
+                newColndex < updatedChessArr.length &&
+                updatedChessArr[newRowIndex][newColndex].chess === chess) {
                 count++;
                 newRowIndex -= dx;
                 newColndex -= dy;
             }
             // 判断是否连续有五个相同的棋子
             if (count >= gameConfig.winCount) {
-                setIsWinner(chess);
+                setWinner(chess);
                 return chess;
             }
         }
     };
     // 历史记录的跳转方式
     jumpTo = (nextMove: number) => {
-        const { isWinner,  history, setPlayArr,  setChess } = this.props;
+        const { winner,  history, setPlayArr,  setChess } = this.props;
         // 获胜后将不能进行悔棋
-        if (isWinner !== '') {
+        if (winner !== '') {
             alert('注意：获胜后将无法进行悔棋！！！');
             return;
         }
@@ -115,12 +124,12 @@ class App extends Component<propType> {
     };
     // 切换游戏后对游戏相关数据进行初始化
     gameChange = (goBangIsNext: boolean) => {
-        const { setPlayArr, setHistory, setChess, setIsWinner } = this.props;
+        const { setPlayArr, setHistory, setChess, setWinner } = this.props;
         const changeGameConfig = goBangIsNext === true ? { chessBorder: 20, winCount: 5 } : { chessBorder: 3, winCount: 3 };
         setChess('先手');
-        setIsWinner('');
-        this.setChessArr(Array(20).fill('')
-            .map(() => Array(20).fill('')));
+        setWinner('');
+        this.setChessArr(Array(changeGameConfig.chessBorder).fill('')
+            .map(() => Array(changeGameConfig.chessBorder).fill('')));
         this.setGoBangIsNext();
         this.serGameConfig(changeGameConfig);
         setHistory([]);
@@ -166,7 +175,7 @@ class App extends Component<propType> {
 const mapStateToProps = (state:propType) => {
     return {
         history: state.history,
-        isWinner: state.isWinner,
+        winner: state.winner,
         chess: state.chess,
         playArr: state.playArr,
     };
@@ -176,5 +185,5 @@ const mapStateToProps = (state:propType) => {
  * @param {*} dispatch
  * @return {*}
  */
-const mapDispatchToProps =  { setHistory, setPlayArr, setChess, setIsWinner };
+const mapDispatchToProps =  { setHistory, setPlayArr, setChess, setWinner };
 export default  connect(mapStateToProps, mapDispatchToProps)(App);

@@ -3,9 +3,13 @@ import { playArrType, sliceType } from '../../App.d';
 
 // 使用该类型定义初始 state
 const initialState: sliceType = {
+    // 历史记录
     history: [],
+    // 下一位玩家
     chess: '先手',
-    isWinner: '',
+    // 获胜方
+    winner: '',
+    // 已下棋子的数据记录
     playArr: [],
 };
 
@@ -26,10 +30,10 @@ export const gameDataSlice = createSlice({
                 chess: action.payload,
             };
         },
-        setIsWinner: (state: sliceType, action: PayloadAction<string>) => {
+        setWinner: (state: sliceType, action: PayloadAction<string>) => {
             return {
                 ...state,
-                isWinner: action.payload,
+                winner: action.payload,
             };
         },
         setPlayArr: (state: sliceType, action: PayloadAction<playArrType>) => {
@@ -41,5 +45,5 @@ export const gameDataSlice = createSlice({
     },
 });
 
-export const { setHistory, setChess, setIsWinner, setPlayArr } = gameDataSlice.actions;
+export const { setHistory, setChess, setWinner, setPlayArr } = gameDataSlice.actions;
 export default gameDataSlice.reducer;

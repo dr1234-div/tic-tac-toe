@@ -8,12 +8,12 @@ class ChessBoard extends Component<ChessBoardType> {
         super(props);
     }
     render () {
-        const { goBangIsNext, border, onPlayChess, isWinner, chess } = this.props;
+        const { goBangIsNext, border, onPlayChess, winner, chess } = this.props;
         let status = '';
         if (goBangIsNext) {
-            isWinner ? status = `获胜者: ${isWinner === '先手' ? 'X' : 'O'}` : status = `下一位玩家: ${chess === '先手' ? 'X' : 'O'}`;
+            winner ? status = `获胜者: ${winner === '先手' ? 'X' : 'O'}` : status = `下一位玩家: ${chess === '先手' ? 'X' : 'O'}`;
         } else {
-            isWinner ? status = `获胜者: ${isWinner === '先手' ? '黑棋' : '白棋'}` : status = `下一位玩家: ${chess === '先手' ? '黑棋' : '白棋'}`;
+            winner ? status = `获胜者: ${winner === '先手' ? '黑棋' : '白棋'}` : status = `下一位玩家: ${chess === '先手' ? '黑棋' : '白棋'}`;
         }
         return (
             <>
@@ -44,7 +44,7 @@ class ChessBoard extends Component<ChessBoardType> {
  */
 const mapStateToProps = (state:propType) => {
     return {
-        isWinner: state.isWinner,
+        winner: state.winner,
         chess: state.chess,
     };
 };

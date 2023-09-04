@@ -30,7 +30,7 @@ export type BoardType = {
     squares: playArrType;
     border: Array<T>;
     onPlay: (rowIndex: number, colIndex: number) => void;
-    isWinner:string;
+    winner:string;
 }
 // 五子棋棋盘自定义组件数据类型
 export type GoBangBoardType = {
@@ -38,14 +38,14 @@ export type GoBangBoardType = {
     newPlayArr: playArrType;
     chessStatus:string;
     onPlayChess: (rowIndex: number, colIndex: number) => void;
-    isWinner:string;
+    winner:string;
 }
 // 棋盘自定义组件数据类型
 export type ChessBoardType = {
     goBangIsNext: boolean;
     border: Array<T>;
     onPlayChess: (rowIndex: number, colIndex: number) => void;
-    isWinner:string;
+    winner:string;
     chess: string;
 }
 
@@ -57,13 +57,13 @@ export type StateType = {
 // redux中的数据和方法，为connt提供类型
 export type propType = {
     history: playArrType;
-    isWinner: string;
+    winner: string;
     chess: string;
     playArr: playArrType;
     setHistory: (value: playArrType) => void;
     setPlayArr: (value: playArrType) => void;
     setChess: (value: string) => void;
-    setIsWinner: (value: string) => void;
+    setWinner: (value: string) => void;
 
 }
 export type ChessStateType = {
@@ -77,6 +77,6 @@ export type ChessStateType = {
 export type sliceType = {
     chess: string;
     history: playArrType;
-    isWinner: string;
+    winner: string;
     playArr: playArrType;
 }
