@@ -4,7 +4,7 @@ import ChessBoard from './components/ChessBoard';
 import { setHistory, setWinner, setChess, setPlayArr } from './store/slice';
 import { StateType, playArrType, propType } from './App.d';
 import { connect } from 'react-redux';
-
+import { GameState } from './utils/ticTacToeAI';
 interface App {
     state: StateType;
     props:propType;
@@ -40,13 +40,24 @@ class App extends Component<propType> {
     // 下棋的回调
     play = (row: number, col: number) => {
         const { winner, playArr, chess, setPlayArr, setHistory, setChess } = this.props;
-        const { chessArr } = this.state;
+        const { chessArr, aiChessType, gameConfig } = this.state;
         if (winner !== '') return;
-        setPlayArr([...playArr, { row, col, chess }]);
-        setHistory([...playArr, { row, col, chess }]);
+        const newPlayChess = [...playArr, { row, col, chess }];
+        setPlayArr(newPlayChess);
+        setHistory(newPlayChess);
         const newChess = chess === '先手' ? '后手' : '先手';
         setChess(newChess);
         this.getWinner(playArr, chess, chessArr, row, col);
+
+        // 一秒后 ai 开始操作
+        setTimeout(() => {
+            // eslint-disable-next-line no-console
+            // console.log('ai执行了');
+            const gameState = new GameState(newPlayChess, chessArr, aiChessType, row, col, gameConfig, 0, 0, 0);
+            gameState.getScore();
+            gameState.nextMove();
+            this.getWinner(playArr, chess, chessArr, row, col);
+        }, 1000);
     };
     // 游戏获胜的方法
     getWinner = (

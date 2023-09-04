@@ -81,3 +81,16 @@ export type sliceType = {
     winner: string;
     playArr: playArrType;
 }
+export type AIType = {
+    chessArr: playArrType[];
+    currentPlayer: string;
+    depth: number;
+    alpha: number;
+    beta: number;
+    counter: number;
+    aiChessType: string;
+    row: number;
+    col: number;
+    playArr: playArrType;
+    gameConfig:{ chessBorder: number, winCount: number };
+}

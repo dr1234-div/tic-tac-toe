@@ -1,45 +1,49 @@
-import { playArrType } from '../src/App.d';
+import { playArrType, AIType } from '../App.d';
 import lodash from 'lodash';
 export class GameState {
-    board: any;
+    chessArr: playArrType[];
     currentPlayer: string;
-    depth: any;
-    choosenState: any;
-    winner: boolean;
-    alpha: any;
-    beta: any;
+    depth: number;
+    alpha: number;
+    beta: number;
     counter: number;
-    aiChessType: any;
-    row: any;
-    col: any;
-    props: { setWinner: any };
-    state: { gameConfig: any };
-    playArr: any;
+    aiChessType: string;
+    row: number;
+    col: number;
+    playArr: playArrType;
+    gameConfig:{ chessBorder: number, winCount: number };
+    choosenState: AIType | null;
     // 传入棋盘数组，当前玩家， depth, alpha, beta这些都为算法的参数
-    constructor (playArr, chessArr, aiChessType, row, col, depth, alpha, beta) {
+    constructor (
+        playArr:playArrType,
+        chessArr:playArrType[],
+        aiChessType:string,
+        row:number,
+        col:number,
+        gameConfig:{ chessBorder: number, winCount: number },
+        depth:number,
+        alpha:number,
+        beta:number
+    ) {
         // 每次下棋都会被更新，在main.js中获取
-        this.board = chessArr;
+        this.chessArr = chessArr;
         // 棋盘上已下棋子的数据记录
         this.playArr = playArr;
         // 当前玩家
-        this.currentPlayer = playArr(-1).chess === '先手' ? 'O' : 'X';
-        this.depth = depth;
-
-        this.choosenState = null;
-        this.winner = false;
-
-        this.alpha = alpha || -Infinity;
-        this.beta = beta || Infinity;
-
-        this.counter = 0;
+        this.currentPlayer = playArr[playArr.length - 1].chess;
         // AI的棋子标记（先手还是后手）
         this.aiChessType = aiChessType;
         this.row = row;
         this.col = col;
+        this.gameConfig = gameConfig;
+
+        this.depth = depth;
+        this.alpha = alpha || -Infinity;
+        this.beta = beta || Infinity;
+        this.counter = 0;
+        this.choosenState = null;
     }
     /**
-     *
-     *
      * @return {*} AI算法的具体逻辑
      * @memberof GameState
      */
@@ -50,7 +54,7 @@ export class GameState {
         const winner = this.getWinner(
             this.playArr,
             this.currentPlayer,
-            this.board,
+            this.chessArr,
             this.row,
             this.col
         );
@@ -75,19 +79,19 @@ export class GameState {
             let maxScore = -1000;
 
             for (let index = 0; index < availablePos.length; index++) {
-                const pos = availablePos[index];
                 // 在给定的位置下子，生成一个新的棋盘
-                const newBoard = this.generateNewBoard(pos, this.currentPlayer);
+                const newChessArr = this.generateNewBoard({ row: availablePos[index].row, col: availablePos[index].col, chess: this.currentPlayer });
                 // 生成一个新的节点
                 const childState = new GameState(
-                    newBoard,
+                    this.playArr,
+                    newChessArr,
+                    this.aiChessType,
+                    this.row,
+                    this.col,
+                    this.gameConfig,
                     this.depth + 1,
                     this.alpha,
                     this.beta,
-                    this.row,
-                    this.col,
-                    this.playArr,
-                    this.aiChessType
                 );
                 // 执行AI算法
                 const childScore:number = childState.getScore();
@@ -110,18 +114,18 @@ export class GameState {
         let minScore = 1000;
 
         for (let index = 0; index < availablePos.length; index++) {
-            const pos = availablePos[index];
-            const newBoard = this.generateNewBoard(pos, this.currentPlayer);
+            const newChessArr = this.generateNewBoard({ row: availablePos[index].row, col: availablePos[index].col, chess: this.currentPlayer });
 
             const childState = new GameState(
-                newBoard,
+                this.playArr,
+                newChessArr,
+                this.aiChessType,
+                this.row,
+                this.col,
+                this.gameConfig,
                 this.depth + 1,
                 this.alpha,
                 this.beta,
-                this.row,
-                this.col,
-                this.playArr,
-                this.aiChessType
             );
             const childScore = childState.getScore();
 
@@ -145,8 +149,6 @@ export class GameState {
         row: number,
         col: number
     ) => {
-        const { setWinner } = this.props;
-        const { gameConfig } = this.state;
         const directions = [
             // 水平方向
             [0, 1],
@@ -193,8 +195,7 @@ export class GameState {
                 newColndex -= dy;
             }
             // 判断是否连续有五个相同的棋子
-            if (count >= gameConfig.winCount) {
-                setWinner(chess);
+            if (count >= this.gameConfig.winCount) {
                 return chess;
             }
         }
@@ -203,28 +204,30 @@ export class GameState {
      * 找出当前仍可以下子的位置
      */
     getAvailablePos () {
-        const result = [];
+        const result:Array<{row:number, col:number}> = [];
         // 声明新变量来接收，不会影响原始数据
-        const updatedChessArr = Array.from(chessArr, (item) => [...item]);
-        playArr.forEach((item) => {
+        const updatedChessArr = Array.from(this.chessArr, (item) => [...item]);
+        this.playArr.forEach((item) => {
             updatedChessArr[item.row][item.col] = { ...item };
         });
-        updatedChessArr.forEach((ele, index) => {
-            if (!ele) {
-                result.push(index);
+        for (let row = 0; row < updatedChessArr.length; row++) {
+            for (let col = 0; col < updatedChessArr[row].length; col++) {
+                if (!updatedChessArr[row][col]) {
+                    result.push({ row, col });
+                }
             }
-        });
+        }
         return result;
     }
 
     /**
      * 给出一个位置，返回一个新的 board
      */
-    generateNewBoard (pos, player) {
+    generateNewBoard (chessValue:{row:number, col:number, chess:string}) {
         // 克隆一个棋盘副本
-        const newChessArr = lodash.clone(this.board);
+        const newChessArr = lodash.clone(this.chessArr);
         // 在对应的位置上渲染出当前玩家最新下的棋子
-        newBoard[pos] = { row: this.row, col: this.col, chess: player };
+        newChessArr[chessValue.row][chessValue.col] = chessValue;
         // 返回每次玩家下棋后更新后的棋盘
         return newChessArr;
     }
@@ -237,6 +240,10 @@ export class GameState {
    * @memberof GameState
    */
     nextMove () {
-        this.board = lodash.clone(this.choosenState.board);
+        if (this.choosenState) {
+            this.chessArr = lodash.clone(this.choosenState.chessArr);
+            // eslint-disable-next-line no-console
+            console.log(this.choosenState.chessArr);
+        }
     }
 }
