@@ -5,6 +5,7 @@ import { setHistory, setWinner, setChess, setPlayArr } from './store/slice';
 import { StateType, playArrType, propType } from './App.d';
 import { connect } from 'react-redux';
 import { GameState } from './utils/ticTacToeAI';
+import lodash from 'lodash';
 interface App {
     state: StateType;
     props:propType;
@@ -22,9 +23,9 @@ class App extends Component<propType> {
             },
             chessArr: Array(3).fill('')
                 .map(() => Array(3).fill('')),
-            aiChessType: '先手',
         };
     }
+
     // 修改goBangIsNext的方法
     setGoBangIsNext = () => {
         this.setState({ goBangIsNext: !this.state.goBangIsNext });
@@ -39,23 +40,29 @@ class App extends Component<propType> {
     };
     // 下棋的回调
     play = (row: number, col: number) => {
-        const { winner, playArr, chess, setPlayArr, setHistory, setChess } = this.props;
-        const { chessArr, aiChessType, gameConfig } = this.state;
+        const { winner, playArr, chess, setPlayArr, setHistory } = this.props;
+        const { chessArr, gameConfig } = this.state;
+        const aiChessType = chess === '先手' ? '后手' : '先手';
         if (winner !== '') return;
         const newPlayChess = [...playArr, { row, col, chess }];
+        // 更新chessArr
+        const newChessArr = lodash.cloneDeep(chessArr);
+        newPlayChess.forEach((item) => {
+            newChessArr[item.row][item.col] = { ...item };
+        });
         setPlayArr(newPlayChess);
         setHistory(newPlayChess);
-        const newChess = chess === '先手' ? '后手' : '先手';
-        setChess(newChess);
-        this.getWinner(playArr, chess, chessArr, row, col);
-
+        const hasWin =  this.getWinner(playArr, chess, chessArr, row, col);
+        if (hasWin) return;
         // 一秒后 ai 开始操作
         setTimeout(() => {
-            // eslint-disable-next-line no-console
-            // console.log('ai执行了');
-            const gameState = new GameState(newPlayChess, chessArr, aiChessType, row, col, gameConfig, 0, 0, 0);
+            const gameState = new GameState(newPlayChess, newChessArr, aiChessType, gameConfig, 0);
             gameState.getScore();
             gameState.nextMove();
+            // eslint-disable-next-line no-console
+            // console.log(gameState.playArr);
+            setPlayArr(gameState.playArr);
+            setHistory(gameState.playArr);
             this.getWinner(playArr, chess, chessArr, row, col);
         }, 1000);
     };
@@ -147,13 +154,23 @@ class App extends Component<propType> {
         setHistory([]);
         setPlayArr([]);
     };
-    // 通过单选框按钮更新ai为先手还是后手
-    handleAiChessTypeChange = (value:string) => {
-        this.setState({ aiChessType: value });
+    handerAIChessTypeChange = (type:string) => {
+        const { setChess, setPlayArr, setHistory } = this.props;
+        // const { gameConfig, chessArr } = this.state;
+        setHistory([]);
+        setPlayArr([]);
+        setChess(type);
+        if (type === '后手') {
+            // // eslint-disable-next-line no-console
+            // console.log('已重新实例化');
+            const newPlayArr = [{ row: Math.floor(Math.random() * 3), col: Math.floor(Math.random() * 3), chess: '先手' }];
+            setPlayArr(newPlayArr);
+            setHistory(newPlayArr);
+        }
     };
     render () {
-        const { goBangIsNext, gameConfig, aiChessType } = this.state;
-        const { history } = this.props;
+        const { goBangIsNext, gameConfig } = this.state;
+        const { history, chess } = this.props;
         return (
             <div className="chess-board-wapper">
                 <div>
@@ -179,16 +196,15 @@ class App extends Component<propType> {
                     </div>
                 </div>
                 <div className='chess-board-right'>
-                    <div><button className='game-change'>关闭AI对战</button></div>
+                    <div><h1>请选择您的角色</h1></div>
                     <div className='state-content'>
                         <div>
-                            <input type="radio" id="onTheMoveAi" name="Ai" value="onTheMoveAi" checked={aiChessType === '先手'}  onChange={() => this.handleAiChessTypeChange('先手')}/>
-                            <label htmlFor="onTheMoveAi">AI先手</label>
+                            <input type="radio" id="subsequentHolderAi" name="Ai" value="subsequentHolderAi" checked={chess === '先手'} onChange={() => this.handerAIChessTypeChange('先手')}/>
+                            <label htmlFor="subsequentHolderAi">选择 X，AI后手</label>
                         </div>
-
-                        <div>
-                            <input type="radio" id="subsequentHolderAi" name="Ai" value="subsequentHolderAi" checked={aiChessType === '后手'} onChange={() => this.handleAiChessTypeChange('后手')}/>
-                            <label htmlFor="subsequentHolderAi">AI后手</label>
+                        <div className='chooseStyle'>
+                            <input type="radio" id="onTheMoveAi" name="Ai" value="onTheMoveAi" checked={chess === '后手'}  onChange={() => this.handerAIChessTypeChange('后手')}/>
+                            <label htmlFor="onTheMoveAi">选择 O，AI先手</label>
                         </div>
                     </div>
                 </div>

@@ -11,9 +11,9 @@ class ChessBoard extends Component<ChessBoardType> {
         const { goBangIsNext, border, onPlayChess, winner, chess } = this.props;
         let status = '';
         if (goBangIsNext) {
-            winner ? status = `获胜者: ${winner === '先手' ? 'X' : 'O'}` : status = `下一位玩家: ${chess === '先手' ? 'X' : 'O'}`;
+            winner ? status = `获胜者: ${winner === '先手' ? 'X' : 'O'}` : status = `您的角色: ${chess === '先手' ? 'X' : 'O'}`;
         } else {
-            winner ? status = `获胜者: ${winner === '先手' ? '黑棋' : '白棋'}` : status = `下一位玩家: ${chess === '先手' ? '黑棋' : '白棋'}`;
+            winner ? status = `获胜者: ${winner === '先手' ? '黑棋' : '白棋'}` : status = `您的角色: ${chess === '先手' ? '黑棋' : '白棋'}`;
         }
         return (
             <>

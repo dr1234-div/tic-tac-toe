@@ -53,7 +53,6 @@ export type StateType = {
     goBangIsNext: boolean;
     gameConfig: { chessBorder: number, winCount: number };
     chessArr: playArrType[];
-    aiChessType:string;
 };
 // redux中的数据和方法，为connt提供类型
 export type propType = {
@@ -83,14 +82,12 @@ export type sliceType = {
 }
 export type AIType = {
     chessArr: playArrType[];
-    currentPlayer: string;
+    playCheeType: string;
     depth: number;
     alpha: number;
     beta: number;
     counter: number;
     aiChessType: string;
-    row: number;
-    col: number;
     playArr: playArrType;
     gameConfig:{ chessBorder: number, winCount: number };
 }
