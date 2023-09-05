@@ -1,13 +1,13 @@
 import { playArrType, AIType } from '../App.d';
 import lodash from 'lodash';
+import store from '../store';
 export class GameState {
     chessArr: playArrType[];
     playCheeType: string;
     depth: number;
     alpha: number;
     beta: number;
-    counter: number;
-    aiChessType: string;
+    player: string;
     row: number;
     col: number;
     playArr: playArrType;
@@ -23,15 +23,13 @@ export class GameState {
         alpha?: number,
         beta?: number
     ) {
-        // 每次下棋都会被更新，在main.js中获取
         this.chessArr = chessArr;
         // 棋盘上已下棋子的数据记录
         this.playArr = playArr;
-        // 当前玩家
-        this.playCheeType = playArr[playArr.length - 1].chess === '先手' ? '后手' : '先手';
-
+        // 该数据主要服务与获胜方法的判断
+        this.playCheeType = playArr[playArr.length - 1].chess;
         // AI的棋子标记（先手还是后手）
-        this.aiChessType = aiChessType;
+        this.player = aiChessType;
         this.row = playArr[playArr.length - 1].row;
         this.col = playArr[playArr.length - 1].col;
         this.gameConfig = gameConfig;
@@ -39,7 +37,7 @@ export class GameState {
         this.depth = depth;
         this.alpha = alpha || -Infinity;
         this.beta = beta || Infinity;
-        this.counter = 0;
+
         this.choosenState = null;
     }
     /**
@@ -48,7 +46,7 @@ export class GameState {
      */
     getScore () {
         // 获取AI代表的棋子类型
-        const aiToken = this.aiChessType;
+        const aiToken = store.getState().chess === '先手' ? '后手' : '先手';
         // 判断游戏是否获胜
         const winner = this.getWinner(
             this.playArr,
@@ -58,6 +56,7 @@ export class GameState {
             this.col
         );
         if (winner) {
+            if (winner === '平局') return 0;
             //   AI获胜返回10
             if (winner === aiToken) return 10;
             //   AI没有获胜返回-10
@@ -73,18 +72,18 @@ export class GameState {
         // 传入的参数为当前仍可以下子的位置
         const availablePos = lodash.shuffle(this.getAvailablePos());
         // 对于 max 节点，返回的是子节点中的最大值
-        if (this.aiChessType === aiToken) {
+        if (this.player === aiToken) {
             let maxScore = -1000;
 
             for (let index = 0; index < availablePos.length; index++) {
                 // 在给定的位置下子，生成一个新的棋盘
-                const newChessArr = this.generateNewBoard({ row: availablePos[index].row, col: availablePos[index].col, chess: this.aiChessType });
-                const newPlayArr = [...this.playArr, { row: availablePos[index].row, col: availablePos[index].col, chess: this.aiChessType }];
+                const newChessArr = this.generateNewBoard({ row: availablePos[index].row, col: availablePos[index].col, chess: this.player });
+                const newPlayArr = [...this.playArr, { row: availablePos[index].row, col: availablePos[index].col, chess: this.player }];
                 // 生成一个新的节点
                 const childState = new GameState(
                     newPlayArr,
                     newChessArr,
-                    changeTurn(this.aiChessType),
+                    changeTurn(this.player),
                     this.gameConfig,
                     this.depth + 1,
                     this.alpha,
@@ -103,8 +102,6 @@ export class GameState {
                     break;
                 }
             }
-            // eslint-disable-next-line no-console
-            // console.log(this.choosenState);
             // 返回max
             return maxScore;
         }
@@ -112,19 +109,18 @@ export class GameState {
         let minScore = 1000;
 
         for (let index = 0; index < availablePos.length; index++) {
-            const newChessArr = this.generateNewBoard({ row: availablePos[index].row, col: availablePos[index].col, chess: this.aiChessType });
-            const newPlayArr = [...this.playArr, { row: availablePos[index].row, col: availablePos[index].col, chess: this.aiChessType }];
+            const newChessArr = this.generateNewBoard({ row: availablePos[index].row, col: availablePos[index].col, chess: this.player });
+            const newPlayArr = [...this.playArr, { row: availablePos[index].row, col: availablePos[index].col, chess: this.player }];
             const childState = new GameState(
                 newPlayArr,
                 newChessArr,
-                changeTurn(this.aiChessType),
+                changeTurn(this.player),
                 this.gameConfig,
                 this.depth + 1,
                 this.alpha,
                 this.beta,
             );
             const childScore = childState.getScore();
-
             if (childScore < minScore) {
                 minScore = childScore;
                 this.choosenState = childState;
@@ -135,8 +131,6 @@ export class GameState {
                 break;
             }
         }
-        // eslint-disable-next-line no-console
-        console.log(this.choosenState);
         return minScore;
     }
     // 游戏获胜的方法
@@ -196,7 +190,12 @@ export class GameState {
             if (count >= this.gameConfig.winCount) {
                 return chess;
             }
-            return false;
+            // 将二维数组变成一维数组
+            const flattenedArr = lodash.flattenDeep(chessArr);
+            if (lodash.compact(flattenedArr).length === 9 && count < this.gameConfig.winCount) return '平局';
+            if (lodash.compact(flattenedArr).length === 9 && count >= this.gameConfig.winCount) {
+                return chess;
+            }
         }
     };
     /**
@@ -232,27 +231,23 @@ export class GameState {
     }
 
     /**
-   *`nextMove()` 方法的作用是将选定状态的棋盘克隆到当前组件的 `board` 属性中。具体来说，
-   它使用了 Lodash 库的 `_.cloneDeep()` 方法来创建一个选定状态的棋盘的副本，然后将该副本赋值给组件的 `board` 属性。
-   这个方法的目的是为了在进行下一步移动之前，确保当前组件的 `board` 属性与选定状态的棋盘一致。通过克隆棋盘，可以避免直接修改选定状态的棋盘，
-   从而确保每次移动都是在一个新的副本上进行的，以保持数据的一致性和可追溯性。
+   *`nextMove()` 方法的作用是确保每次移动都是在一个新的副本上进行的，以保持数据的一致性和可追溯性。
    * @memberof GameState
    */
     nextMove () {
         if (this.choosenState) {
             this.chessArr = lodash.cloneDeep(this.choosenState.chessArr);
             this.playArr = lodash.cloneDeep(this.choosenState.playArr);
-            // eslint-disable-next-line no-console
-            console.log(this.choosenState);
+            this.row = lodash.cloneDeep(this.choosenState.row);
+            this.col = lodash.cloneDeep(this.choosenState.col);
         }
     }
 }
 /**
  * @param {string} player
- * @return {*}
+ * @return {*} 做递归运算时用于更新player
  * @memberof GameState
  */
 const changeTurn = (player: string) => {
     return player === '先手' ? '后手' : '先手';
 };
-

@@ -86,8 +86,9 @@ export type AIType = {
     depth: number;
     alpha: number;
     beta: number;
-    counter: number;
-    aiChessType: string;
+    row:number;
+    col:number;
+    player: string;
     playArr: playArrType;
     gameConfig:{ chessBorder: number, winCount: number };
 }

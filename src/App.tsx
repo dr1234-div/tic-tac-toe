@@ -59,11 +59,9 @@ class App extends Component<propType> {
             const gameState = new GameState(newPlayChess, newChessArr, aiChessType, gameConfig, 0);
             gameState.getScore();
             gameState.nextMove();
-            // eslint-disable-next-line no-console
-            // console.log(gameState.playArr);
             setPlayArr(gameState.playArr);
             setHistory(gameState.playArr);
-            this.getWinner(playArr, chess, chessArr, row, col);
+            this.getWinner(gameState.playArr, gameState.player, gameState.chessArr, gameState.row, gameState.col);
         }, 1000);
     };
     // 游戏获胜的方法
@@ -126,6 +124,12 @@ class App extends Component<propType> {
                 setWinner(chess);
                 return chess;
             }
+            const flattenedArr = lodash.flattenDeep(chessArr);
+            if (lodash.compact(flattenedArr).length === 9 && count < gameConfig.winCount) return '平局';
+            if (lodash.compact(flattenedArr).length === 9 && count >= gameConfig.winCount) {
+                setWinner(chess);
+                return chess;
+            }
         }
     };
     // 历史记录的跳转方式
@@ -155,14 +159,15 @@ class App extends Component<propType> {
         setPlayArr([]);
     };
     handerAIChessTypeChange = (type:string) => {
-        const { setChess, setPlayArr, setHistory } = this.props;
+        const { setChess, setPlayArr, setHistory, setWinner } = this.props;
         // const { gameConfig, chessArr } = this.state;
         setHistory([]);
         setPlayArr([]);
         setChess(type);
+        setWinner('');
+        this.setChessArr(Array(3).fill('')
+            .map(() => Array(3).fill('')));
         if (type === '后手') {
-            // // eslint-disable-next-line no-console
-            // console.log('已重新实例化');
             const newPlayArr = [{ row: Math.floor(Math.random() * 3), col: Math.floor(Math.random() * 3), chess: '先手' }];
             setPlayArr(newPlayArr);
             setHistory(newPlayArr);
