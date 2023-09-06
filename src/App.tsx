@@ -40,10 +40,10 @@ class App extends Component<propType> {
     };
     // 下棋的回调
     play = (row: number, col: number) => {
-        const { winner, playArr, chess, setPlayArr, setHistory } = this.props;
-        const { chessArr, gameConfig } = this.state;
-        const aiChessType = chess === '先手' ? '后手' : '先手';
+        const { winner, playArr, chess, setChess, setPlayArr, setHistory } = this.props;
+        const { chessArr, gameConfig, goBangIsNext } = this.state;
         if (winner !== '') return;
+        const aiChessType = chess === '先手' ? '后手' : '先手';
         const newPlayArr = [...playArr, { row, col, chess }];
         // 更新chessArr
         const newChessArr = lodash.cloneDeep(chessArr);
@@ -52,7 +52,15 @@ class App extends Component<propType> {
         });
         setPlayArr(newPlayArr);
         setHistory(newPlayArr);
-        this.getWinner(playArr, chess, chessArr, row, col);
+
+        // 当前游戏不为井字棋时不执行AI算法
+        if (goBangIsNext === false) {
+            setChess(aiChessType);
+            this.getWinner(newPlayArr, chess, chessArr, row, col);
+            return;
+        }
+
+        this.getWinner(newPlayArr, chess, chessArr, row, col);
         if (lodash.compact(lodash.flattenDeep(newChessArr)).length === 9 || winner !== '') return;
         // 一秒后 ai 开始操作
         setTimeout(() => {
@@ -200,19 +208,23 @@ class App extends Component<propType> {
                         })}</ul>
                     </div>
                 </div>
-                <div className='chess-board-right'>
-                    <div><h1>请选择您的角色</h1></div>
-                    <div className='state-content'>
-                        <div>
-                            <input type="radio" id="subsequentHolderAi" name="Ai" value="subsequentHolderAi" checked={chess === '先手'} onChange={() => this.handerAIChessTypeChange('先手')}/>
-                            <label htmlFor="subsequentHolderAi">选择 X，AI后手</label>
-                        </div>
-                        <div className='chooseStyle'>
-                            <input type="radio" id="onTheMoveAi" name="Ai" value="onTheMoveAi" checked={chess === '后手'}  onChange={() => this.handerAIChessTypeChange('后手')}/>
-                            <label htmlFor="onTheMoveAi">选择 O，AI先手</label>
+                {goBangIsNext
+                    ? <div className='chess-board-right'>
+                        <div><h1>请选择您的角色</h1></div>
+                        <div className='state-content'>
+                            <div>
+                                <input type="radio" id="subsequentHolderAi" name="Ai" value="subsequentHolderAi" checked={chess === '先手'} onChange={() => this.handerAIChessTypeChange('先手')}/>
+                                <label htmlFor="subsequentHolderAi">选择 X，AI后手</label>
+                            </div>
+                            <div className='chooseStyle'>
+                                <input type="radio" id="onTheMoveAi" name="Ai" value="onTheMoveAi" checked={chess === '后手'}  onChange={() => this.handerAIChessTypeChange('后手')}/>
+                                <label htmlFor="onTheMoveAi">选择 O，AI先手</label>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    :  ''
+                }
+
             </div>
         );
     }
