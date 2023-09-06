@@ -152,7 +152,7 @@ export class GameState {
             [-1, 1],
         ];
         // 声明新变量来接收，不会影响原始数据
-        const updatedChessArr = Array.from(chessArr, (item) => [...item]);
+        const updatedChessArr = lodash.cloneDeep(chessArr);
         playArr.forEach((item) => {
             updatedChessArr[item.row][item.col] = { ...item };
         });
@@ -192,7 +192,9 @@ export class GameState {
             }
             // 将二维数组变成一维数组
             const flattenedArr = lodash.flattenDeep(chessArr);
-            if (lodash.compact(flattenedArr).length === 9 && count < this.gameConfig.winCount) return '平局';
+            if (lodash.compact(flattenedArr).length === 9 && count < this.gameConfig.winCount) {
+                return '平局';
+            }
             if (lodash.compact(flattenedArr).length === 9 && count >= this.gameConfig.winCount) {
                 return chess;
             }
