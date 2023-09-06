@@ -44,19 +44,19 @@ class App extends Component<propType> {
         const { chessArr, gameConfig } = this.state;
         const aiChessType = chess === '先手' ? '后手' : '先手';
         if (winner !== '') return;
-        const newPlayChess = [...playArr, { row, col, chess }];
+        const newPlayArr = [...playArr, { row, col, chess }];
         // 更新chessArr
         const newChessArr = lodash.cloneDeep(chessArr);
-        newPlayChess.forEach((item) => {
+        newPlayArr.forEach((item) => {
             newChessArr[item.row][item.col] = { ...item };
         });
-        setPlayArr(newPlayChess);
-        setHistory(newPlayChess);
-        const hasWin =  this.getWinner(playArr, chess, chessArr, row, col);
-        if (hasWin) return;
+        setPlayArr(newPlayArr);
+        setHistory(newPlayArr);
+        this.getWinner(playArr, chess, chessArr, row, col);
+        if (lodash.compact(lodash.flattenDeep(newChessArr)).length === 9 || winner !== '') return;
         // 一秒后 ai 开始操作
         setTimeout(() => {
-            const gameState = new GameState(newPlayChess, newChessArr, aiChessType, gameConfig, 0);
+            const gameState = new GameState(newPlayArr, newChessArr, aiChessType, gameConfig, 0);
             gameState.getScore();
             gameState.nextMove();
             setPlayArr(gameState.playArr);
