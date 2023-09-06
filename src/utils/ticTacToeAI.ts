@@ -1,5 +1,5 @@
 import { playArrType, AIType } from '../App.d';
-import lodash from 'lodash';
+import lodash, { memoize } from 'lodash';
 import store from '../store';
 export class GameState {
     chessArr: playArrType[];
@@ -44,10 +44,14 @@ export class GameState {
      * @return {*} AI算法的具体逻辑
      * @memberof GameState
      */
-    getScore () {
+    getScore = memoize(() => {
+        // 添加深度限制
+        if (this.depth >= 5) {
+            return 0; // 或者其他默认值
+        }
         // 获取AI代表的棋子类型
         const aiToken = store.getState().chess === '先手' ? '后手' : '先手';
-        // 判断游戏是否获胜
+        // 判断游戏是否获胜---------------------(1.将下面获得分数的内容封装成一个方法，getWinner中的参数作为形参进行外界接收)
         const winner = this.getWinner(
             this.playArr,
             this.playCheeType,
@@ -62,55 +66,18 @@ export class GameState {
             //   AI没有获胜返回-10
             return -10;
         }
-
-        // 到达了最大深度后的相应处理，这里未限制深度
-        if (this.depth >= 100) {
-            return 0;
-        }
-
-        // 获得所有可能的位置，利用 shuffle 加入随机性
-        // 传入的参数为当前仍可以下子的位置
         const availablePos = lodash.shuffle(this.getAvailablePos());
-        // 对于 max 节点，返回的是子节点中的最大值
-        if (this.player === aiToken) {
-            let maxScore = -1000;
-
-            for (let index = 0; index < availablePos.length; index++) {
-                // 在给定的位置下子，生成一个新的棋盘
-                const newChessArr = this.generateNewBoard({ row: availablePos[index].row, col: availablePos[index].col, chess: this.player });
-                const newPlayArr = [...this.playArr, { row: availablePos[index].row, col: availablePos[index].col, chess: this.player }];
-                // 生成一个新的节点
-                const childState = new GameState(
-                    newPlayArr,
-                    newChessArr,
-                    changeTurn(this.player),
-                    this.gameConfig,
-                    this.depth + 1,
-                    this.alpha,
-                    this.beta,
-                );
-                // 执行AI算法
-                const childScore: number = childState.getScore();
-                if (childScore > maxScore) {
-                    maxScore = childScore;
-                    // 这里保存产生了最大的分数的节点，之后会被用于进行下一步
-                    this.choosenState = childState;
-                    this.alpha = maxScore;
-                }
-                // 如果满足了退出的条件，我们不需要继续搜索更多的节点了，退出循环
-                if (this.alpha >= this.beta) {
-                    break;
-                }
-            }
-            // 返回max
-            return maxScore;
-        }
-        // 对于 min 节点，返回的是子节点中的最小值，逻辑与获取max类似
+        let maxScore = -1000;
         let minScore = 1000;
+        let chosenState = null;
+        let alpha = -Infinity;
+        let beta = Infinity;
 
         for (let index = 0; index < availablePos.length; index++) {
+            // 在给定的位置下子，生成一个新的棋盘
             const newChessArr = this.generateNewBoard({ row: availablePos[index].row, col: availablePos[index].col, chess: this.player });
             const newPlayArr = [...this.playArr, { row: availablePos[index].row, col: availablePos[index].col, chess: this.player }];
+            // 生成一个新的节点
             const childState = new GameState(
                 newPlayArr,
                 newChessArr,
@@ -120,19 +87,37 @@ export class GameState {
                 this.alpha,
                 this.beta,
             );
-            const childScore = childState.getScore();
-            if (childScore < minScore) {
-                minScore = childScore;
-                this.choosenState = childState;
-                this.beta = minScore;
-            }
-
-            if (this.alpha >= this.beta) {
-                break;
+            // 执行AI算法---------------------(2.实例化好新的对象后，通过读取新对象上的属性传给上面封装的方法来获取分数)
+            const childScore: number = childState.getScore();
+            // 求最大值
+            if (this.player === aiToken) {
+                if (childScore > maxScore) {
+                    maxScore = childScore;
+                    chosenState = childState;
+                    alpha = maxScore;
+                }
+                if (alpha >= beta) {
+                    break;
+                }
+            } else {
+                // 求最小值
+                if (childScore < minScore) {
+                    minScore = childScore;
+                    chosenState = childState;
+                    beta = minScore;
+                }
+                if (alpha >= beta) {
+                    break;
+                }
             }
         }
-        return minScore;
-    }
+
+        this.choosenState = chosenState;
+        // eslint-disable-next-line no-console
+        console.log(maxScore);
+        return this.player === aiToken ? maxScore : minScore;
+    });
+
     // 游戏获胜的方法
     getWinner = (
         playArr: playArrType,
@@ -192,10 +177,10 @@ export class GameState {
             }
             // 将二维数组变成一维数组
             const flattenedArr = lodash.flattenDeep(chessArr);
-            if (lodash.compact(flattenedArr).length === 9 && count < this.gameConfig.winCount) {
+            if (lodash.compact(flattenedArr).length === this.gameConfig.chessBorder ** 2 && count < this.gameConfig.winCount) {
                 return '平局';
             }
-            if (lodash.compact(flattenedArr).length === 9 && count >= this.gameConfig.winCount) {
+            if (lodash.compact(flattenedArr).length === this.gameConfig.chessBorder ** 2 && count >= this.gameConfig.winCount) {
                 return chess;
             }
         }
@@ -242,6 +227,8 @@ export class GameState {
             this.playArr = lodash.cloneDeep(this.choosenState.playArr);
             this.row = lodash.cloneDeep(this.choosenState.row);
             this.col = lodash.cloneDeep(this.choosenState.col);
+            // eslint-disable-next-line no-console
+            console.log(this.choosenState);
         }
     }
 }
