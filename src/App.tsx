@@ -44,7 +44,7 @@ class App extends Component<propType> {
         const { winner, playArr, chess, setPlayArr, setHistory } = this.props;
         const { chessArr, gameConfig } = this.state;
         if (winner !== '') return;
-        const aiChessType = chess === '先手' ? '后手' : '先手';
+        // const aiChessType = chess === '先手' ? '后手' : '先手';
         const newPlayArr = [...playArr, { row, col, chess }];
         // 更新chessArr
         const newChessArr = lodash.cloneDeep(chessArr);
@@ -59,12 +59,14 @@ class App extends Component<propType> {
         if (lodash.compact(lodash.flattenDeep(newChessArr)).length === gameConfig.chessBorder ** 2 || winner !== '') return;
         // 一秒后 ai 开始操作
         setTimeout(() => {
-            const gameState = new GameState(newPlayArr, newChessArr, aiChessType, gameConfig, 0);
-            gameState.getScore();
-            gameState.nextMove();
+            // const gameState = new GameState(newPlayArr, newChessArr, aiChessType, gameConfig, 0);
+            const gameState = new GameState(newPlayArr, newChessArr, gameConfig);
+            // gameState.getScore();
+            // gameState.nextMove();
+            gameState.computerDown();
             setPlayArr(gameState.playArr);
             setHistory(gameState.playArr);
-            this.getWinner(gameState.playArr, gameState.player, gameState.chessArr, gameState.row, gameState.col);
+            // this.getWinner(gameState.playArr, gameState.player, gameState.chessArr, gameState.row, gameState.col);
         }, 500);
     };
     // 游戏获胜的方法
