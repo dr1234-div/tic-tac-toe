@@ -51,6 +51,7 @@ export class GameState {
         }
         // 获取AI代表的棋子类型
         const aiToken = store.getState().chess === '先手' ? '后手' : '先手';
+        // 评估函数
         const winner = this.getWinner(
             this.playArr,
             this.playCheeType,
@@ -131,6 +132,10 @@ export class GameState {
             [1, 1],
             // 左斜方向
             [-1, 1],
+            // 右下斜方向
+            [1, -1],
+            // 左下斜方向
+            [-1, -1],
         ];
         // 声明新变量来接收，不会影响原始数据
         const updatedChessArr = lodash.cloneDeep(chessArr);
