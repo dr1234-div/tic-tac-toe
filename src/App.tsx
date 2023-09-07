@@ -6,6 +6,7 @@ import { StateType, playArrType, propType } from './App.d';
 import { connect } from 'react-redux';
 import { GameState } from './utils/ticTacToeAI';
 import lodash from 'lodash';
+
 interface App {
     state: StateType;
     props:propType;

@@ -26,7 +26,8 @@ class ChessBoard extends Component<ChessBoardType> {
                                     ?  <ChessType key={(rowIndex * 3) + colIndex} goBangIsNext={goBangIsNext} rowIndex={ rowIndex } colIndex={colIndex}  onPlay={onPlayChess}/>
                                     :  <div className="chess-board-col" key={`col + ${colIndex}`}>
                                         <div className="chess-board-cell">
-                                            <ChessType goBangIsNext={goBangIsNext} rowIndex={ rowIndex } colIndex={colIndex}  onPlay={onPlayChess}/>
+                                            {/* 解决AI算法中横纵左边颠倒问题 */}
+                                            <ChessType goBangIsNext={goBangIsNext} rowIndex={ colIndex } colIndex={ rowIndex }  onPlay={onPlayChess}/>
                                         </div>
                                     </div>
                             ))}
