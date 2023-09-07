@@ -46,12 +46,11 @@ export class GameState {
      */
     getScore = memoize(() => {
         // 添加深度限制
-        if (this.depth >= 5) {
-            return 0; // 或者其他默认值
+        if (this.depth >= 100) {
+            return 0;
         }
         // 获取AI代表的棋子类型
         const aiToken = store.getState().chess === '先手' ? '后手' : '先手';
-        // 判断游戏是否获胜---------------------(1.将下面获得分数的内容封装成一个方法，getWinner中的参数作为形参进行外界接收)
         const winner = this.getWinner(
             this.playArr,
             this.playCheeType,
@@ -70,8 +69,6 @@ export class GameState {
         let maxScore = -1000;
         let minScore = 1000;
         let chosenState = null;
-        let alpha = -Infinity;
-        let beta = Infinity;
 
         for (let index = 0; index < availablePos.length; index++) {
             // 在给定的位置下子，生成一个新的棋盘
@@ -87,16 +84,15 @@ export class GameState {
                 this.alpha,
                 this.beta,
             );
-            // 执行AI算法---------------------(2.实例化好新的对象后，通过读取新对象上的属性传给上面封装的方法来获取分数)
             const childScore: number = childState.getScore();
             // 求最大值
             if (this.player === aiToken) {
                 if (childScore > maxScore) {
                     maxScore = childScore;
                     chosenState = childState;
-                    alpha = maxScore;
+                    this.alpha = maxScore;
                 }
-                if (alpha >= beta) {
+                if (this.alpha >= this.beta) {
                     break;
                 }
             } else {
@@ -104,9 +100,9 @@ export class GameState {
                 if (childScore < minScore) {
                     minScore = childScore;
                     chosenState = childState;
-                    beta = minScore;
+                    this.beta = minScore;
                 }
-                if (alpha >= beta) {
+                if (this.alpha >= this.beta) {
                     break;
                 }
             }
@@ -114,7 +110,7 @@ export class GameState {
 
         this.choosenState = chosenState;
         // eslint-disable-next-line no-console
-        console.log(maxScore);
+        // console.log(maxScore);
         return this.player === aiToken ? maxScore : minScore;
     });
 
@@ -228,7 +224,7 @@ export class GameState {
             this.row = lodash.cloneDeep(this.choosenState.row);
             this.col = lodash.cloneDeep(this.choosenState.col);
             // eslint-disable-next-line no-console
-            console.log(this.choosenState);
+            // console.log(this.choosenState);
         }
     }
 }
