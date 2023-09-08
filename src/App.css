@@ -120,5 +120,6 @@
     margin-top: 20px;
 }
 .title-style{
-    margin-right: 0;
+    display: flex;
+    justify-content: right;
 }
