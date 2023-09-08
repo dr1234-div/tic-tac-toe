@@ -46,7 +46,7 @@ class App extends Component<propType> {
      * @memberof App
      */
     play = (row: number, col: number) => {
-        const { winner, playArr, chess, setPlayArr, setHistory, setWinner } = this.props;
+        const { winner, playArr, chess, setPlayArr, setHistory } = this.props;
         const { gameConfig, chessArr } = this.state;
         if (winner !== '') return;
         const aiChessType = chess === '先手' ? '后手' : '先手';
@@ -59,7 +59,7 @@ class App extends Component<propType> {
         setPlayArr(newPlayArr);
         setHistory(newPlayArr);
 
-        const win =  getWinner(chess, row, col, updatedChessArr, gameConfig, setWinner);
+        const win =  getWinner(chess, row, col, updatedChessArr, gameConfig);
         if (win) return;
 
         // ai 开始操作
@@ -74,7 +74,7 @@ class App extends Component<propType> {
             this.setChessArr(updatedChessArr);
             setPlayArr(gameState.playArr);
             setHistory(gameState.playArr);
-            getWinner(aiChessType, gameState.playArr[gameState.playArr.length - 1].row, gameState.playArr[gameState.playArr.length - 1].col, updatedChessArr, gameConfig, setWinner);
+            getWinner(aiChessType, gameState.playArr[gameState.playArr.length - 1].row, gameState.playArr[gameState.playArr.length - 1].col, updatedChessArr, gameConfig);
         }, 300);
     };
 
@@ -84,7 +84,7 @@ class App extends Component<propType> {
      * @memberof App
      */
     jumpTo = (nextMove: number) => {
-        const { chess, winner,  history, setPlayArr, setWinner } = this.props;
+        const { chess, winner,  history, setPlayArr } = this.props;
         const { gameConfig, chessArr } = this.state;
         // 获胜后将不能进行悔棋
         if (winner !== '') {
@@ -107,7 +107,7 @@ class App extends Component<propType> {
                 this.setChessArr(updatedChessArr);
                 setPlayArr(gameState.playArr);
                 setHistory(gameState.playArr);
-                getWinner(lastFilterChess, gameState.playArr[gameState.playArr.length - 1].row, gameState.playArr[gameState.playArr.length - 1].col, updatedChessArr, gameConfig, setWinner);
+                getWinner(lastFilterChess, gameState.playArr[gameState.playArr.length - 1].row, gameState.playArr[gameState.playArr.length - 1].col, updatedChessArr, gameConfig);
             }, 0);
         }
         setPlayArr(nextHistory);

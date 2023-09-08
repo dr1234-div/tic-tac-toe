@@ -1,5 +1,7 @@
 import lodash from 'lodash';
 import { playArrType } from '../App.d';
+import store from '../store';
+import { setWinner } from '../store/slice';
 
 /**
  * @description 游戏获胜的方法
@@ -8,7 +10,6 @@ import { playArrType } from '../App.d';
  * @param {number} col 棋子纵坐标
  * @param {playArrType[]} updatedChessArr 已更新的棋盘状态
  * @param {{ chessBorder: number, winCount: number }} gameConfig 当前游戏的棋盘相关配置
- * @param {void} 更新游戏状态的方法(获胜/平局)
  */
 export default (
     chess: string,
@@ -16,7 +17,6 @@ export default (
     col: number,
     updatedChessArr: playArrType[],
     gameConfig: { chessBorder: number, winCount: number },
-    setWinner:(value:string) => void
 ) => {
     const directions = [
         // 水平方向
@@ -59,12 +59,12 @@ export default (
         }
         // 判断是否连续有五个相同的棋子
         if (count >= gameConfig.winCount) {
-            setWinner(chess);
+            store.dispatch(setWinner(chess));
             return chess;
         }
         const flattenedArr = lodash.flattenDeep(updatedChessArr);
         if (lodash.compact(flattenedArr).length === gameConfig.chessBorder ** 2 && count < gameConfig.winCount) {
-            setWinner('平局');
+            store.dispatch(setWinner('平局'));
             return '平局';
         }
     }
