@@ -4,7 +4,6 @@ export class GameState {
     playCheeType: string;
     playArr: playArrType;
     gameConfig: { chessBorder: number, winCount: number };
-    maxScore:number;
     constructor (
         playArr: playArrType,
         playCheeType:string,
@@ -13,9 +12,14 @@ export class GameState {
         this.playArr = playArr;
         this.playCheeType = playCheeType;
         this.gameConfig = gameConfig;
-        this.maxScore = -1;
     }
-    // 五子棋计分表
+
+    /**
+     * @description 五子棋计分表
+     * @param {number} playerNum 玩家得分
+     * @param {number} computerNum AI得分
+     * @memberof GameState
+     */
     chessScore = (playerNum: number, computerNum: number) => {
         // 机器进攻
 
@@ -65,25 +69,40 @@ export class GameState {
 
         return -1; // 如果是其他情况，则出现错误，不会执行该段代码
     };
-    // 记录棋盘已下棋子
+
+    /**
+     *@description 记录棋盘已下棋子
+     * @param {number} chessBorder 棋盘的长度
+     * @memberof GameState
+     */
     initializeChessScore = (chessBorder:number) => {
         const chessScore = Array(chessBorder)
             .fill([])
             .map(() => Array(chessBorder).fill('无棋子'));
-
         const initializeCheeArr = lodash.cloneDeep(this.playArr);
+        if (initializeCheeArr.length === 0) return chessScore;
         initializeCheeArr.forEach((item) => {
             chessScore[item.row][item.col] = item.chess;
         });
         return chessScore;
     };
-    // AI下棋动作
+
+    /**
+     * @description AI下棋动作
+     */
     computerDown = () => {
         const { chessBorder, winCount } = this.gameConfig;
         const score = Array(chessBorder).fill([])
             .map(() => Array(chessBorder).fill(0));
         const chessPlace = this.initializeChessScore(chessBorder);
         let AIChess = null;
+
+        const directions = [
+            { rowDelta: 0, colDelta: 1 }, // 横向
+            { rowDelta: 1, colDelta: 0 }, // 纵向
+            { rowDelta: 1, colDelta: 1 }, // 反斜线
+            { rowDelta: -1, colDelta: 1 }, // 正斜线
+        ];
 
         /**
          *@description 计算给定起始位置和增量的行列方向上的得分
@@ -118,7 +137,8 @@ export class GameState {
             }
         };
 
-        /** 根据棋盘上每个位置的得分获取最有位置
+        /**
+         * @description 根据棋盘上每个位置的得分获取最有位置
          */
         const findBestMove = () => {
             let maxScore = -Infinity;
@@ -133,31 +153,19 @@ export class GameState {
             }
         };
 
-        // 横向寻找
         for (let row = 0; row < chessBorder; row++) {
-            for (let col = 0; col < chessBorder - winCount + 1; col++) {
-                calculateScore(row, col, 0, 1);
-            }
-        }
-
-        // 纵向寻找
-        for (let col = 0; col < chessBorder; col++) {
-            for (let row = 0; row < chessBorder - winCount + 1; row++) {
-                calculateScore(row, col, 1, 0);
-            }
-        }
-
-        // 反斜线寻找
-        for (let row = 0; row < chessBorder - winCount + 1; row++) {
-            for (let col = 0; col < chessBorder - winCount + 1; col++) {
-                calculateScore(row, col, 1, 1);
-            }
-        }
-
-        // 正斜线寻找
-        for (let row = winCount - 1; row < chessBorder; row++) {
-            for (let col = 0; col < chessBorder - winCount + 1; col++) {
-                calculateScore(row, col, -1, 1);
+            for (let col = 0; col < chessBorder; col++) {
+                for (const direction of directions) {
+                    const { rowDelta, colDelta } = direction;
+                    if (
+                        (col < chessBorder - winCount + 1 && rowDelta === 0 && colDelta === 1) ||
+                        (row < chessBorder - winCount + 1 && rowDelta === 1 && colDelta === 0) ||
+                        (row < chessBorder - winCount + 1 && col < chessBorder - winCount + 1 && rowDelta === 1 && colDelta === 1) ||
+                        (row >= winCount - 1 && col < chessBorder - winCount + 1 && rowDelta === -1 && colDelta === 1)
+                    ) {
+                        calculateScore(row, col, rowDelta, colDelta);
+                    }
+                }
             }
         }
 

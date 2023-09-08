@@ -57,8 +57,16 @@
 }
 
 .add-scroll{
-    height: 500px; /* 设置容器的高度 */
-    overflow-y: scroll; /* 启用垂直滚动条 */
+    /* 设置容器的高度 */
+    height: 500px; 
+    /* 启用垂直滚动条 */
+    overflow-y: scroll; 
+}
+.add-scroll::-webkit-scrollbar 
+    /* 隐藏滚动条宽度 */{
+    width: 0;
+    /* 设置滚动条背景为透明 */
+    background: transparent; 
 }
 
 .game-change{
@@ -116,10 +124,14 @@
 .ul-style{
     padding: 0;
 }
-.chooseStyle{
+.choose-style{
     margin-top: 20px;
 }
 .title-style{
     display: flex;
     justify-content: right;
+}
+.button-width{
+    width: 160px;
+    margin-bottom: 5px;
 }

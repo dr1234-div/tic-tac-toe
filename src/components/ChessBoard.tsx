@@ -9,12 +9,26 @@ class ChessBoard extends Component<ChessBoardType> {
     }
     render () {
         const { goBangIsNext, border, onPlayChess, winner, chess } = this.props;
+
         let status = '';
-        if (goBangIsNext) {
-            winner ? status = `获胜者: ${winner === '先手' ? 'X' : 'O'}` : status = `您的角色: ${chess === '先手' ? 'X' : 'O'}`;
+        if (winner && winner !== '平局') {
+            const winnerRole = winner === '先手' ? 'X' : 'O';
+            if (goBangIsNext) {
+                status = `获胜者: ${winnerRole}`;
+            } else {
+                status = `获胜者: ${winnerRole === 'X' ? '黑棋' : '白棋'}`;
+            }
+        } else if (winner === '平局') {
+            status = '本场平局';
         } else {
-            winner ? status = `获胜者: ${winner === '先手' ? '黑棋' : '白棋'}` : status = `您的角色: ${chess === '先手' ? '黑棋' : '白棋'}`;
+            const role = chess === '先手' ? 'X' : 'O';
+            if (goBangIsNext) {
+                status = `您的角色: ${role}`;
+            } else {
+                status = `您的角色: ${role === 'X' ? '黑棋' : '白棋'}`;
+            }
         }
+
         return (
             <>
                 <h1 className='title-style'>{status}</h1>
