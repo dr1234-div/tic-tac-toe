@@ -17,7 +17,7 @@ class ChessBoard extends Component<ChessBoardType> {
         }
         return (
             <>
-                <h1>{status}</h1>
+                <h1 className='title-style'>{status}</h1>
                 <div className= {goBangIsNext ? '' : 'chess-board'} >
                     {border.map((row:number, rowIndex:number) => (
                         <div className= {goBangIsNext ? 'board-row' : 'chess-board-row'}  key={`row + ${rowIndex}`}>

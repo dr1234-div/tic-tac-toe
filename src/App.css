@@ -6,8 +6,9 @@
   }
   
   .square {
-    background: #fff;
-    border: 1px solid #999;
+    /* background: #fff;
+    border: 1px solid #999; */
+    border: 2px solid #efecec; 
     float: left;
     font-size: 84px;
     font-weight: bold;
@@ -34,6 +35,8 @@
     align-items: center;
     box-sizing: border-box;
     padding: 0;
+    background-image: url('http://wk-china.gitee.io/gobang/img/background/%E5%AE%87%E5%AE%99.jfif');
+    color: #eee;
 }
 
 .chess-board{
@@ -72,9 +75,10 @@
     position: relative;
 }
 .chess-board-cell{
-    border: 1px solid rgb(131, 130, 130);
-    width: 25px;
-    height: 25px;
+    border: 1.3px solid #efecec; 
+    /* border: 1px solid rgb(243, 241, 241); */
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
@@ -114,4 +118,7 @@
 }
 .chooseStyle{
     margin-top: 20px;
+}
+.title-style{
+    margin-right: 0;
 }

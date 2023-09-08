@@ -62,7 +62,7 @@ class App extends Component<propType> {
             setPlayArr(gameState.playArr);
             setHistory(gameState.playArr);
             this.getWinner(gameState.playArr, aiChessType, gameState.playArr[gameState.playArr.length - 1].row, gameState.playArr[gameState.playArr.length - 1].col);
-        }, 500);
+        }, 300);
     };
 
     // 游戏获胜的方法
