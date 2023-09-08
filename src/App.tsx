@@ -39,41 +39,36 @@ class App extends Component<propType> {
     setChessArr = (value: playArrType[]) => {
         this.setState({ chessArr: value });
     };
+
     // 下棋的回调
     play = (row: number, col: number) => {
         const { winner, playArr, chess, setPlayArr, setHistory } = this.props;
-        const { chessArr, gameConfig } = this.state;
+        const { gameConfig } = this.state;
         if (winner !== '') return;
-        // const aiChessType = chess === '先手' ? '后手' : '先手';
+        const aiChessType = chess === '先手' ? '后手' : '先手';
         const newPlayArr = [...playArr, { row, col, chess }];
-        // 更新chessArr
-        const newChessArr = lodash.cloneDeep(chessArr);
-        newPlayArr.forEach((item) => {
-            newChessArr[item.row][item.col] = { ...item };
-        });
+
         setPlayArr(newPlayArr);
         setHistory(newPlayArr);
 
+        const win =  this.getWinner(newPlayArr, chess, row, col);
+        if (win) return;
 
-        this.getWinner(newPlayArr, chess, chessArr, row, col);
-        if (lodash.compact(lodash.flattenDeep(newChessArr)).length === gameConfig.chessBorder ** 2 || winner !== '') return;
         // 一秒后 ai 开始操作
         setTimeout(() => {
-            // const gameState = new GameState(newPlayArr, newChessArr, aiChessType, gameConfig, 0);
-            const gameState = new GameState(newPlayArr, newChessArr, gameConfig);
-            // gameState.getScore();
-            // gameState.nextMove();
+            if (winner !== '') return;
+            const gameState = new GameState(newPlayArr, aiChessType, gameConfig);
             gameState.computerDown();
             setPlayArr(gameState.playArr);
             setHistory(gameState.playArr);
-            // this.getWinner(gameState.playArr, gameState.player, gameState.chessArr, gameState.row, gameState.col);
+            this.getWinner(gameState.playArr, aiChessType, gameState.playArr[gameState.playArr.length - 1].row, gameState.playArr[gameState.playArr.length - 1].col);
         }, 500);
     };
+
     // 游戏获胜的方法
     getWinner = (
         playArr: playArrType,
         chess: string,
-        chessArr: playArrType[],
         row: number,
         col: number
     ) => {
@@ -90,7 +85,7 @@ class App extends Component<propType> {
             [-1, 1],
         ];
         // 声明新变量来接收，不会影响原始数据
-        const updatedChessArr = Array.from(chessArr, (item) => [...item]);
+        const updatedChessArr = Array.from(this.state.chessArr, (item) => [...item]);
         playArr.forEach((item) => {
             updatedChessArr[item.row][item.col] = { ...item };
         });
@@ -129,14 +124,11 @@ class App extends Component<propType> {
                 setWinner(chess);
                 return chess;
             }
-            const flattenedArr = lodash.flattenDeep(chessArr);
-            if (lodash.compact(flattenedArr).length === gameConfig.chessBorder ** 2 && count < gameConfig.winCount) return '平局';
-            if (lodash.compact(flattenedArr).length === gameConfig.chessBorder ** 2 && count >= gameConfig.winCount) {
-                setWinner(chess);
-                return chess;
-            }
+            const flattenedArr = lodash.flattenDeep(updatedChessArr);
+            if (lodash.compact(flattenedArr).length === gameConfig.chessBorder ** 2) return '平局';
         }
     };
+
     // 历史记录的跳转方式
     jumpTo = (nextMove: number) => {
         const { winner,  history, setPlayArr,  setChess } = this.props;
@@ -150,6 +142,7 @@ class App extends Component<propType> {
         setChess(lastFilterChess);
         setPlayArr(nextHistory);
     };
+
     // 切换游戏后对游戏相关数据进行初始化
     gameChange = (goBangIsNext: boolean) => {
         const { setPlayArr, setHistory, setChess, setWinner } = this.props;
@@ -163,6 +156,8 @@ class App extends Component<propType> {
         setHistory([]);
         setPlayArr([]);
     };
+
+    // 选择游戏角色
     handerAIChessTypeChange = (type:string) => {
         const { setChess, setPlayArr, setHistory, setWinner } = this.props;
         const { gameConfig } = this.state;
@@ -178,6 +173,7 @@ class App extends Component<propType> {
             setHistory(newPlayArr);
         }
     };
+
     render () {
         const { goBangIsNext, gameConfig } = this.state;
         const { history, chess } = this.props;
@@ -201,7 +197,7 @@ class App extends Component<propType> {
                     <div>
                         <button className='game-change' onClick={() => this.gameChange(goBangIsNext)}>{goBangIsNext ? '五子棋游戏' : '井棋游戏'}</button>
                     </div>
-                    <div className='state-content'>
+                    <div className='state-content add-scroll'>
                         <ul className="ul-style">{history.map((__, move: number) => {
                             return (
                                 <li key={move}>

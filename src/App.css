@@ -53,6 +53,11 @@
     margin-top: 30px;
 }
 
+.add-scroll{
+    height: 500px; /* 设置容器的高度 */
+    overflow-y: scroll; /* 启用垂直滚动条 */
+}
+
 .game-change{
     font-size: 20px;
 }
