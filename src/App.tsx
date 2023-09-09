@@ -4,10 +4,9 @@ import ChessBoard from './components/ChessBoard';
 import { setHistory, setWinner, setChess, setPlayArr } from './store/slice';
 import { StateType, playArrType, propType } from './App.d';
 import { connect } from 'react-redux';
-import { GameState } from './utils/ticTacToeAI';
 import lodash from 'lodash';
 import GAME_CONFIG from './utils/gameConfig';
-import getWinner from './utils/getWinner';
+import { aiPlay, getWinner, handerAIChessTypeChange, jumpTo } from './utils/functionSum';
 
 interface App {
     state: StateType;
@@ -55,7 +54,6 @@ class App extends Component<propType> {
         newPlayArr.forEach((item) => {
             updatedChessArr[item.row][item.col] = { ...item };
         });
-        this.setChessArr(updatedChessArr);
         setPlayArr(newPlayArr);
         setHistory(newPlayArr);
 
@@ -63,56 +61,15 @@ class App extends Component<propType> {
         if (win) return;
 
         // ai 开始操作
-        setTimeout(() => {
-            if (winner !== '') return;
-            const gameState = new GameState(newPlayArr, aiChessType, gameConfig);
-            gameState.computerDown();
-            const updatedChessArr = lodash.cloneDeep(chessArr);
-            gameState.playArr.forEach((item) => {
-                updatedChessArr[item.row][item.col] = { ...item };
-            });
-            this.setChessArr(updatedChessArr);
-            setPlayArr(gameState.playArr);
-            setHistory(gameState.playArr);
-            getWinner(aiChessType, gameState.playArr[gameState.playArr.length - 1].row, gameState.playArr[gameState.playArr.length - 1].col, updatedChessArr, gameConfig);
-        }, 300);
+        aiPlay(
+            winner,
+            newPlayArr,
+            updatedChessArr,
+            aiChessType,
+            gameConfig,
+            300
+        );
     };
-
-    /**
-     * @description 历史记录跳转动作
-     * @param {number} nextMove 步骤号
-     * @memberof App
-     */
-    jumpTo = (nextMove: number) => {
-        const { chess, winner,  history, setPlayArr } = this.props;
-        const { gameConfig, chessArr } = this.state;
-        // 获胜后将不能进行悔棋
-        if (winner !== '') {
-            alert('注意：游戏已结束，无法进行悔棋！！！');
-            return;
-        }
-        const nextHistory = history.slice(0, nextMove + 1);
-        // 获取应该下棋的角色
-        const lastFilterChess = nextHistory[nextHistory.length - 1].chess === '先手' ? '后手' : '先手';
-        // 判断当前应该下棋的角色是不是玩家角色
-        if (lastFilterChess !== chess) {
-            setTimeout(() => {
-                if (winner !== '') return;
-                const gameState = new GameState(nextHistory, lastFilterChess, gameConfig);
-                gameState.computerDown();
-                const updatedChessArr = lodash.cloneDeep(chessArr);
-                gameState.playArr.forEach((item) => {
-                    updatedChessArr[item.row][item.col] = { ...item };
-                });
-                this.setChessArr(updatedChessArr);
-                setPlayArr(gameState.playArr);
-                setHistory(gameState.playArr);
-                getWinner(lastFilterChess, gameState.playArr[gameState.playArr.length - 1].row, gameState.playArr[gameState.playArr.length - 1].col, updatedChessArr, gameConfig);
-            }, 0);
-        }
-        setPlayArr(nextHistory);
-    };
-
 
     /**
      * @description 切换游戏后对游戏相关数据进行初始化
@@ -130,31 +87,6 @@ class App extends Component<propType> {
         this.serGameConfig(changeGameConfig);
         setHistory([]);
         setPlayArr([]);
-    };
-
-
-    /**
-     * @description 选择游戏角色动作
-     * @param {string} type 玩家角色（先手/后手）
-     * @memberof App
-     */
-    handerAIChessTypeChange = (type:string) => {
-        const { setChess, setPlayArr, setHistory, setWinner } = this.props;
-        const { gameConfig } = this.state;
-        setHistory([]);
-        setPlayArr([]);
-        setChess(type);
-        setWinner('');
-        this.setChessArr(Array(gameConfig.chessBorder).fill('')
-            .map(() => Array(gameConfig.chessBorder).fill('')));
-        if (type === '后手') {
-            setTimeout(() => {
-                const gameState = new GameState([], '先手', gameConfig);
-                gameState.computerDown();
-                setPlayArr(gameState.playArr);
-                setHistory(gameState.playArr);
-            }, 300);
-        }
     };
 
     render () {
@@ -181,30 +113,30 @@ class App extends Component<propType> {
                         <button className='game-change' onClick={() => this.gameChange(goBangIsNext)}>{goBangIsNext ? '切换至五子棋游戏' : '切换至井棋游戏'}</button>
                     </div>
                     <div className='state-content add-scroll'>
-                        <ul className="ul-style"> {history.map((__, move: number) => {
-                            let player = '';
-                            if (chess === '先手') {
-                                player = move % 2 === 0 ? '玩家' : 'AI';
-                            } else {
-                                player = move % 2 === 0 ? 'AI' : '玩家';
-                            }
-
-                            return (
-                                <li key={move}>
-                                    <button className='button-width' onClick={() => this.jumpTo(move)}>{`跳转到步骤：${Number(move + 1)} (${player})`}</button>
-                                </li>
-                            );
-                        })}</ul>
+                        <ul className="ul-style">
+                            {history.map((__, move: number) => {
+                                const isPlayerMove = (chess === '先手' && move % 2 !== 0) || (chess === '后手' && move % 2 === 0);
+                                if (isPlayerMove) {
+                                    return (
+                                        <li key={move}>
+                                            <button className='button-width' onClick={() => jumpTo(move)}>{`跳转到步骤：${Number(move + 1) / 2}`}</button>
+                                        </li>
+                                    );
+                                }
+                                return null;
+                            })}
+                        </ul>
                     </div>
-                </div><div className='chess-board-right'>
+                </div>
+                <div className='chess-board-right'>
                     <div><h1>请选择您的角色</h1></div>
                     <div className='state-content'>
                         <div>
-                            <input type="radio" id='sub-sequent-holder-ai' name='ai' value='sub-sequent-holder-ai' checked={chess === '先手'} onChange={() => this.handerAIChessTypeChange('先手')}/>
+                            <input type="radio" id='sub-sequent-holder-ai' name='ai' value='sub-sequent-holder-ai' checked={chess === '先手'} onChange={() => handerAIChessTypeChange('先手', gameConfig, this.setChessArr)}/>
                             <label htmlFor='sub-sequent-holder-ai'>选择 {status[0]}，AI后手</label>
                         </div>
                         <div className='choose-style'>
-                            <input type='radio' id='on-move-ai' name='ai' value='on-move-ai' checked={chess === '后手'}  onChange={() => this.handerAIChessTypeChange('后手')}/>
+                            <input type='radio' id='on-move-ai' name='ai' value='on-move-ai' checked={chess === '后手'}  onChange={() => handerAIChessTypeChange('后手', gameConfig, this.setChessArr)}/>
                             <label htmlFor='on-move-ai'>选择 {status[1]}，AI先手</label>
                         </div>
                     </div>
