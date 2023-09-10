@@ -48,7 +48,7 @@ const getWinner = (
             }
         }
         // 判断是否连续有五个相同的棋子
-        if (count >= gameConfig.winCount) {
+        if (count === gameConfig.winCount) {
             store.dispatch(setWinner(chess));
             return chess;
         }
