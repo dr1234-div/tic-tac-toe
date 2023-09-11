@@ -100,7 +100,7 @@ class App extends Component<propType> {
         }
         return (
             <div className="chess-board-wapper">
-                <div>
+                <div className='border-layout-style'>
                     <ChessBoard
                         goBangIsNext={goBangIsNext}
                         border={Array(gameConfig.chessBorder).fill(null)}

@@ -35,8 +35,16 @@
     align-items: center;
     box-sizing: border-box;
     padding: 0;
-    background-image: url('http://wk-china.gitee.io/gobang/img/background/%E5%AE%87%E5%AE%99.jfif');
     color: #eee;
+}
+/* 布局响应式 */
+@media screen and (max-width: 1200px)  {
+    .border-layout-style{
+        position: absolute;
+        height: 400px;
+        width: 400px;
+        bottom: 0px;
+    }
 }
 
 .chess-board{

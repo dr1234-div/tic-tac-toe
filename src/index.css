@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+      background-image: url('http://wk-china.gitee.io/gobang/img/background/%E5%AE%87%E5%AE%99.jfif');
   /* background: #f19150; */
 }
 

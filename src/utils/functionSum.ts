@@ -67,7 +67,7 @@ const getWinner = (
      * @memberof App
      */
 const jumpTo = (nextMove: number,) => {
-    const { winner,  history } = store.getState();
+    const { winner, history } = store.getState();
     // 获胜后将不能进行悔棋
     if (winner !== '') {
         alert('注意：游戏已结束，无法进行悔棋！！！');
@@ -86,8 +86,8 @@ const jumpTo = (nextMove: number,) => {
 const play = (
     row: number,
     col: number,
-    newChessArr:playArrType[],
-    gameConfig:{
+    newChessArr: playArrType[],
+    gameConfig: {
         chessBorder: number;
         winCount: number;
     },
@@ -103,7 +103,7 @@ const play = (
     store.dispatch(setPlayArr(newPlayArr));
     store.dispatch(setHistory(newPlayArr));
 
-    const win =  getWinner(chess, row, col, updatedChessArr, gameConfig);
+    const win = getWinner(chess, row, col, updatedChessArr, gameConfig);
     if (win) return;
 
     // ai 开始操作
@@ -124,12 +124,12 @@ const play = (
  * @description 实现AI下棋功能
  */
 const aiPlay = (
-    winner:string,
-    newPlayArr:playArrType,
-    newChessArr:playArrType[],
-    aiChessType:string,
-    gameConfig:{chessBorder: number, winCount: number},
-    time:number
+    winner: string,
+    newPlayArr: playArrType,
+    newChessArr: playArrType[],
+    aiChessType: string,
+    gameConfig: { chessBorder: number, winCount: number },
+    time: number
 ) => {
     setTimeout(() => {
         if (winner !== '') return;
@@ -151,12 +151,12 @@ const aiPlay = (
      * @memberof App
      */
 const handerAIChessTypeChange = (
-    type:string,
-    gameConfig:{
+    type: string,
+    gameConfig: {
         chessBorder: number;
         winCount: number;
     },
-    setChessArr:(value:playArrType[])=> void
+    setChessArr: (value: playArrType[]) => void
 ) => {
     store.dispatch(setHistory([]));
     store.dispatch(setPlayArr([]));
@@ -164,7 +164,18 @@ const handerAIChessTypeChange = (
     store.dispatch(setWinner(''));
     setChessArr(Array(gameConfig.chessBorder).fill('')
         .map(() => Array(gameConfig.chessBorder).fill('')));
-    if (type === '后手') {
+    // 井字棋AI先手最优位置
+    if (type === '后手' && gameConfig.chessBorder === 3) {
+        // // 定义坐标列表
+        const coordinates = [{ row: 0, col: 0, chess: '先手' }, { row: 0, col: 2, chess: '先手' }, { row: 2, col: 0, chess: '先手' }, { row: 2, col: 2, chess: '先手' }];
+        // 生成随机索引
+        const randomIndex = Math.floor(Math.random() * coordinates.length);
+        // 获取随机坐标
+        const randomCoordinate = coordinates[randomIndex];
+        store.dispatch(setPlayArr([randomCoordinate]));
+        store.dispatch(setHistory([randomCoordinate]));
+    }
+    if (type === '后手' && gameConfig.chessBorder !== 3) {
         // 找出AI先手的最优位置
         setTimeout(() => {
             const gameState = new GameState([], '先手', gameConfig);
