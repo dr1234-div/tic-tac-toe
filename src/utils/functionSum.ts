@@ -161,7 +161,7 @@ const handerAIChessTypeChange = (
     store.dispatch(setHistory([]));
     store.dispatch(setPlayArr([]));
     store.dispatch(setChess(type));
-    setWinner('');
+    store.dispatch(setWinner(''));
     setChessArr(Array(gameConfig.chessBorder).fill('')
         .map(() => Array(gameConfig.chessBorder).fill('')));
     if (type === '后手') {

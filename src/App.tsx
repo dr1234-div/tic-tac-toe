@@ -115,11 +115,16 @@ class App extends Component<propType> {
                     <div className='state-content add-scroll'>
                         <ul className="ul-style">
                             {history.map((__, move: number) => {
-                                const isPlayerMove = (chess === '先手' && move % 2 !== 0) || (chess === '后手' && move % 2 === 0);
-                                if (isPlayerMove) {
+                                if (chess === '先手' && move % 2 !== 0) {
                                     return (
                                         <li key={move}>
                                             <button className='button-width' onClick={() => jumpTo(move)}>{`跳转到步骤：${Number(move + 1) / 2}`}</button>
+                                        </li>
+                                    );
+                                } else if (chess === '后手' && move % 2 === 0) {
+                                    return (
+                                        <li key={move}>
+                                            <button className='button-width' onClick={() => jumpTo(move)}>{`跳转到步骤：${Number(move + 2) / 2}`}</button>
                                         </li>
                                     );
                                 }
