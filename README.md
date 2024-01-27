@@ -1,6 +1,6 @@
 # 井字棋+五子棋游戏（支持AI博弈）
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+已上线：https://tic-tac-toe.4everland.app/
 
 ## 项目介绍
 
