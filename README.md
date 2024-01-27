@@ -1,6 +1,6 @@
 # 井字棋+五子棋游戏（支持AI博弈）
 
-已上线：https://tic-tac-toe.4everland.app/
+已上线：https://tic-tac-toe.4everland.app/，建议使用谷歌浏览器
 
 ## 项目介绍
 
